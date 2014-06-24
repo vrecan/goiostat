@@ -1,25 +1,34 @@
 package main
 
 import (
-   "fmt"
    "os"
+   "bufio"
    "log"
+   "strings"
+   "./diskStat"
+   "fmt"
+
 )
 
 const linuxDiskStats = "/proc/diskstats"
 
 func main() {
-  
-	file, err := os.Open(linuxDiskStats)
-	if err != nil {
+  file,err := os.Open(linuxDiskStats)
+  if nil != err {
 		log.Fatal(err)
 	}
+  scanner := bufio.NewScanner(file)
+  for scanner.Scan() {
+  	// fmt.Println(scanner.Text())
+  	line := strings.Fields(scanner.Text())
+  	stat,err := diskStat.LineToStat(line)
+  	if(nil != err) {
+  		log.Fatal(err);
+  	}
+  	fmt.Println(stat);
 
-	data := make([]byte, 100)
-	count, err := file.Read(data)
-	if err != nil {
-	log.Fatal(err)
-}
-fmt.Printf("read %d bytes: %q\n", count, data[:count])
-
+  }
+  if err := scanner.Err(); err != nil {
+    log.Fatal(err)
+	}
 }
