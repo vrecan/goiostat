@@ -9,10 +9,15 @@ import (
    "fmt"
 
 )
+/**
+Go version of iostat, pull stats from proc and optionally log or send to a zeroMQ
+*/
+
 
 const linuxDiskStats = "/proc/diskstats"
 
 func main() {
+  my_channel := make(chan diskStat.DiskStat, 1000)
   file,err := os.Open(linuxDiskStats)
   if nil != err {
 		log.Fatal(err)
@@ -23,12 +28,14 @@ func main() {
   	line := strings.Fields(scanner.Text())
   	stat,err := diskStat.LineToStat(line)
   	if(nil != err) {
-  		log.Fatal(err);
+  		log.Fatal(err)
   	}
-  	fmt.Println(stat);
-
+  	my_channel <- stat
   }
   if err := scanner.Err(); err != nil {
     log.Fatal(err)
 	}
+  for recv := range my_channel {
+   fmt.Println(recv)
+  }
 }
