@@ -83,7 +83,7 @@ func LineToStat(line []string) (stat DiskStat, err error){
 	}
 	stat.sectorsWritten = tmp		
 
-tmp,err = strconv.ParseInt(line[10], 10, 64)
+	tmp,err = strconv.ParseInt(line[10], 10, 64)
 	if nil != err {
 		return stat, err;
 	}

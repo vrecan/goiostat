@@ -10,6 +10,3 @@ for {
 		fmt.Println(stat)
 	}
 }
-
-
-
