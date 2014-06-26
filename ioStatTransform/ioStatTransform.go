@@ -5,8 +5,15 @@ import(
    )
 
 func TransformStat(channel <-chan diskStat.DiskStat) (err error) {
+	lastRawStat: map[string]diskStat.DiskStat{}
 for {
 		stat := <- channel
-		fmt.Println(stat)
+		lastStat, in := lastRawStat[stat.device]
+		if in {
+			//do calculations
+			fmt.Println(lastStat)
+		} else {
+			lastRawStat[stat.device] = stat
+		}
 	}
 }
