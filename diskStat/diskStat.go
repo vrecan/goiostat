@@ -2,7 +2,7 @@ package diskStat
 import (
    "strconv"
    )
-type diskStat struct {
+type DiskStat struct {
 	id int64
 	partId int64
 	device string
@@ -23,7 +23,7 @@ type diskStat struct {
   Simple function that takes a string and converts it to a stat
   TODO: Figure out better way to map string to struct
 */
-func LineToStat(line []string) (stat diskStat, err error){
+func LineToStat(line []string) (stat DiskStat, err error){
 	var tmp int64
 	tmp,err = strconv.ParseInt(line[0], 10, 64)
 	if nil != err {
@@ -83,7 +83,7 @@ func LineToStat(line []string) (stat diskStat, err error){
 	}
 	stat.sectorsWritten = tmp		
 
-tmp,err = strconv.ParseInt(line[10], 10, 64)
+	tmp,err = strconv.ParseInt(line[10], 10, 64)
 	if nil != err {
 		return stat, err;
 	}
