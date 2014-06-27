@@ -22,8 +22,6 @@ for {
 			}
 			timeDiffMilli,err := getTimeDiffMilli(prevStat.RecordTime, stat.RecordTime)
 			if(nil != err) { fmt.Println(err);continue}
-			// timeDiffTicks,err := getTimeDiffTicks(prevStat.RecordTime, stat.RecordTime)
-			// if(nil != err) { fmt.Println(err);continue}
 
 			readsMerged,err := getOneSecondAvg(prevStat.ReadsMerged, stat.ReadsMerged, timeDiffMilli)
 			if(nil != err) { fmt.Println(err);continue}
@@ -43,22 +41,12 @@ for {
 			util,err := getUtilization(prevStat.MillisDoingIo, stat.MillisDoingIo, timeDiffMilli)
 			if(nil != err) { fmt.Println(err);continue}	
 			
-			fmt.Printf( "%s:  rrqm/s %.2f wrqm/s %.2f r/s %.2f w/s %.2f rsize/s %s wsize/s %s util %.2f \n\n", 
+			fmt.Printf( "%s:  rrqm/s %.2f wrqm/s %.2f r/s %.2f w/s %.2f rsize/s %s wsize/s %s util %.2f%% \n\n", 
 				stat.Device, readsMerged, writesMerged, reads, writes, humanize.Bytes(uint64(sectorsRead)), 
 					humanize.Bytes(uint64(sectorsWrite)), util)
 		}
 		LastRawStat[stat.Device] = stat
 	}
-}
-
-func getTimeDiffTicks( old int64, cur int64) (r float64, err error) {
-		if(old >= cur) {
-		err= errors.New("Time has moved backward or not moved at all... impressive!")
-		return
-	}
-	r = float64(cur - old) 
-	return
-	
 }
 
 func getTimeDiffMilli( old int64,  cur int64) (r float64, err error){
