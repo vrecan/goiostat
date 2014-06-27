@@ -49,6 +49,6 @@ func main() {
     if err := scanner.Err(); err != nil {
       log.Fatal(err)
   	}
-    time.Sleep(1 * time.Second)
+    time.Sleep(2 * time.Second)
   }
 }
