@@ -22,6 +22,6 @@ for {
 			fmt.Println( stat.Device, " rrqm/s ", rrq, " timeDiff ", timeDiff / 1000000)
 
 		} 
-			LastRawStat[stat.Device] = stat
+		LastRawStat[stat.Device] = stat
 	}
 } 
