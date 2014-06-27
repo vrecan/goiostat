@@ -10,6 +10,7 @@ import (
    "time"
    "./diskStat"
    "./ioStatTransform"
+   "flag"
    // "fmt"
 
 )
@@ -17,10 +18,12 @@ import (
 Go version of iostat, pull stats from proc and optionally log or send to a zeroMQ
 */
 
+var interval = flag.Int("interval", 5, "Interval that stats should be reported.")
 
 const linuxDiskStats = "/proc/diskstats"
 
 func main() {
+  flag.Parse()
   for {
     my_channel := make(chan diskStat.DiskStat, 1000)
     go ioStatTransform.TransformStat(my_channel)
@@ -49,6 +52,6 @@ func main() {
     if err := scanner.Err(); err != nil {
       log.Fatal(err)
   	}
-    time.Sleep(2 * time.Second)
+    time.Sleep(time.Second * time.Duration(*interval))
   }
 }
