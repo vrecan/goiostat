@@ -9,11 +9,11 @@ type DiskStat struct {
 	Device string
 	ReadsCompleted int64
 	ReadsMerged int64
-	SectorsRead int64
+	SectorsRead uint64
 	MillisReading int64
 	WritesCompleted int64
 	WritesMerged int64
-	SectorsWritten int64
+	SectorsWrite uint64
 	MillisWriting int64
 	IoInProgress int64
 	MillisDoingIo int64
@@ -27,6 +27,7 @@ type DiskStat struct {
 */
 func LineToStat(line []string) (stat DiskStat, err error){
 	var tmp int64
+	var tmpu uint64
 
 	stat.RecordTime = time.Now().UnixNano()
 
@@ -58,11 +59,11 @@ func LineToStat(line []string) (stat DiskStat, err error){
 	stat.ReadsMerged = tmp		
 
 
-	tmp,err = strconv.ParseInt(line[5], 10, 64)
+	tmpu,err = strconv.ParseUint(line[5], 10, 64)
 	if nil != err {
 		return stat, err;
 	}
-	stat.SectorsRead = tmp
+	stat.SectorsRead = (tmpu * 1024) / 2
 
 	tmp,err = strconv.ParseInt(line[6], 10, 64)
 	if nil != err {
@@ -82,11 +83,11 @@ func LineToStat(line []string) (stat DiskStat, err error){
 	}
 	stat.WritesMerged = tmp	
 
-	tmp,err = strconv.ParseInt(line[9], 10, 64)
+	tmpu,err = strconv.ParseUint(line[9], 10, 64)
 	if nil != err {
 		return stat, err;
 	}
-	stat.SectorsWritten = tmp		
+	stat.SectorsWrite = (tmpu * 1024) /2	
 
 	tmp,err = strconv.ParseInt(line[10], 10, 64)
 	if nil != err {
