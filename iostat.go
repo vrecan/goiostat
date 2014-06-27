@@ -2,6 +2,8 @@ package main
 
 import (
    "os"
+   // "os/signal"
+   // "syscall"
    "bufio"
    "log"
    "strings"
@@ -23,13 +25,20 @@ func main() {
     my_channel := make(chan diskStat.DiskStat, 1000)
     go ioStatTransform.TransformStat(my_channel)
 
+    // // Handle SIGINT and SIGTERM.
+    // ch := make(chan os.Signal)
+    // signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
+
     file,err := os.Open(linuxDiskStats)
     if nil != err {
   		log.Fatal(err)
   	}
+    
+
+
+
     scanner := bufio.NewScanner(file)
     for scanner.Scan() {
-    	// fmt.Println(scanner.Text())
     	line := strings.Fields(scanner.Text())
     	stat,err := diskStat.LineToStat(line)
     	if(nil != err) {
@@ -40,6 +49,6 @@ func main() {
     if err := scanner.Err(); err != nil {
       log.Fatal(err)
   	}
-    time.Sleep(5 * time.Second)
+    time.Sleep(2 * time.Second)
   }
 }
