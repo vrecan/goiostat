@@ -7,6 +7,13 @@ package systemCall
 */
 import "C"
 
+/**
+C system calls to go types
+*/
+
+/**
+ Get clock ticks per second from unix
+*/
 func GetClockTicksPerSecond() (ticksPerSecond uint64){
     var sc_clk_tck C.long
     sc_clk_tck = C.sysconf(C._SC_CLK_TCK)

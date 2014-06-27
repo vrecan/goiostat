@@ -37,7 +37,7 @@ func main() {
   		log.Fatal(err)
   	}
     
-
+    defer file.Close()
 
 
     scanner := bufio.NewScanner(file)
@@ -54,4 +54,5 @@ func main() {
   	}
     time.Sleep(time.Second * time.Duration(*interval))
   }
+
 }
