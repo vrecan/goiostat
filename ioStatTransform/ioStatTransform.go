@@ -3,17 +3,25 @@ import(
    "fmt"
     "../diskStat"
    )
+var LastRawStat = make(map[string]diskStat.DiskStat)	
 
 func TransformStat(channel <-chan diskStat.DiskStat) (err error) {
-	lastRawStat: map[string]diskStat.DiskStat{}
 for {
 		stat := <- channel
-		lastStat, in := lastRawStat[stat.device]
+		prevStat,in := LastRawStat[stat.Device]
+
 		if in {
 			//do calculations
-			fmt.Println(lastStat)
-		} else {
-			lastRawStat[stat.device] = stat
-		}
+			// fmt.Println(stat)
+			// fmt.Println(prevStat)
+			if(stat.ReadsCompleted == 0 && stat.WritesCompleted == 0) {
+				continue
+			}
+			timeDiff:= stat.RecordTime - prevStat.RecordTime
+			rrq := stat.ReadsCompleted - prevStat.ReadsCompleted
+			fmt.Println( stat.Device, " rrqm/s ", rrq, " timeDiff ", timeDiff / 1000000)
+
+		} 
+			LastRawStat[stat.Device] = stat
 	}
-}
+} 

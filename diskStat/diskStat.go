@@ -1,22 +1,24 @@
 package diskStat
 import (
    "strconv"
+   "time"
    )
 type DiskStat struct {
-	id int64
-	partId int64
-	device string
-	readsCompleted int64
-	readsMerged int64
-	sectorsRead int64
-	millisReading int64
-	writesCompleted int64
-	writesMerged int64
-	sectorsWritten int64
-	millisWriting int64
-	ioInProgress int64
-	millisDoingIo int64
-	weightedMillisDoingIo int64
+	Id int64
+	PartId int64
+	Device string
+	ReadsCompleted int64
+	ReadsMerged int64
+	SectorsRead int64
+	MillisReading int64
+	WritesCompleted int64
+	WritesMerged int64
+	SectorsWritten int64
+	MillisWriting int64
+	IoInProgress int64
+	MillisDoingIo int64
+	WeightedMillisDoingIo int64
+	RecordTime int64
 }
 
 /*
@@ -25,87 +27,90 @@ type DiskStat struct {
 */
 func LineToStat(line []string) (stat DiskStat, err error){
 	var tmp int64
+
+	stat.RecordTime = time.Now().UnixNano()
+
 	tmp,err = strconv.ParseInt(line[0], 10, 64)
 	if nil != err {
 		return stat, err;
 	}
-	stat.id = tmp
+	stat.Id = tmp
 
 	tmp,err = strconv.ParseInt(line[1], 10, 64)
 	if nil != err {
 		return stat, err;
 	}
-	stat.partId = tmp
+	stat.PartId = tmp
 
-  	stat.device = line[2]
+  	stat.Device = line[2]
 
 
 	tmp,err = strconv.ParseInt(line[3], 10, 64)
 	if nil != err {
 		return stat, err;
 	}
-	stat.readsCompleted = tmp
+	stat.ReadsCompleted = tmp
 
 	tmp,err = strconv.ParseInt(line[4], 10, 64)
 	if nil != err {
 		return stat, err;
 	}
-	stat.readsMerged = tmp		
+	stat.ReadsMerged = tmp		
 
 
 	tmp,err = strconv.ParseInt(line[5], 10, 64)
 	if nil != err {
 		return stat, err;
 	}
-	stat.sectorsRead = tmp
+	stat.SectorsRead = tmp
 
 	tmp,err = strconv.ParseInt(line[6], 10, 64)
 	if nil != err {
 		return stat, err;
 	}
-	stat.millisReading = tmp	
+	stat.MillisReading = tmp	
 
 	tmp,err = strconv.ParseInt(line[7], 10, 64)
 	if nil != err {
 		return stat, err;
 	}
-	stat.writesCompleted = tmp		
+	stat.WritesCompleted = tmp		
 	
 	tmp,err = strconv.ParseInt(line[8], 10, 64)
 	if nil != err {
 		return stat, err;
 	}
-	stat.writesMerged = tmp	
+	stat.WritesMerged = tmp	
 
 	tmp,err = strconv.ParseInt(line[9], 10, 64)
 	if nil != err {
 		return stat, err;
 	}
-	stat.sectorsWritten = tmp		
+	stat.SectorsWritten = tmp		
 
 	tmp,err = strconv.ParseInt(line[10], 10, 64)
 	if nil != err {
 		return stat, err;
 	}
-	stat.millisWriting = tmp			
+	stat.MillisWriting = tmp			
 
 	tmp,err = strconv.ParseInt(line[11], 10, 64)
 	if nil != err {
 		return stat, err;
 	}
-	stat.ioInProgress = tmp	
+	stat.IoInProgress = tmp	
 
 	tmp,err = strconv.ParseInt(line[12], 10, 64)
 	if nil != err {
 		return stat, err;
 	}
-	stat.millisDoingIo = tmp	
+	stat.MillisDoingIo = tmp	
 
     tmp,err = strconv.ParseInt(line[13], 10, 64)
 	if nil != err {
 		return stat, err;
 	}
-	stat.weightedMillisDoingIo = tmp	
+	stat.WeightedMillisDoingIo = tmp	
 
 
   	return stat, err;
