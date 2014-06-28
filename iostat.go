@@ -27,17 +27,17 @@ func main() {
   // // Handle SIGINT and SIGTERM.
   // ch := make(chan os.Signal)
   // signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
-
+  statsTransformChannel := make(chan diskStat.DiskStat, 1)
   for {
-    readAndSendStats()
+    readAndSendStats(statsTransformChannel)
     time.Sleep(time.Second * time.Duration(*interval))
   }
-
+  close(statsTransformChannel)
 }
 
-func readAndSendStats() {
-    my_channel := make(chan diskStat.DiskStat, 20)
-    go ioStatTransform.TransformStat(my_channel)
+func readAndSendStats(statsTransformChannel chan diskStat.DiskStat) {
+    
+    go ioStatTransform.TransformStat(statsTransformChannel)
 
     file,err := os.Open(linuxDiskStats)
     if nil != err {
@@ -52,7 +52,7 @@ func readAndSendStats() {
       if(nil != err) {
         log.Fatal(err)
       }
-      my_channel <- stat
+      statsTransformChannel <- stat
     }
 
     if err := scanner.Err(); err != nil {
