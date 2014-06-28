@@ -25,7 +25,7 @@ const linuxDiskStats = "/proc/diskstats"
 func main() {
   flag.Parse()
   for {
-    my_channel := make(chan diskStat.DiskStat, 1000)
+    my_channel := make(chan diskStat.DiskStat, 1)
     go ioStatTransform.TransformStat(my_channel)
 
     // // Handle SIGINT and SIGTERM.
@@ -37,9 +37,7 @@ func main() {
   		log.Fatal(err)
   	}
     
-    defer file.Close()
-
-
+    
     scanner := bufio.NewScanner(file)
     for scanner.Scan() {
     	line := strings.Fields(scanner.Text())
@@ -49,6 +47,7 @@ func main() {
     	}
     	my_channel <- stat
     }
+    file.Close()
     if err := scanner.Err(); err != nil {
       log.Fatal(err)
   	}
