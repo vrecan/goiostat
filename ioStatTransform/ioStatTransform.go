@@ -11,6 +11,27 @@ var LastRawStat = make(map[string]diskStat.DiskStat)
 var partition = regexp.MustCompile(`\w.*\d`)
 const oneSecondInMilli = 1000
 
+type DiskStatDiff struct {
+	Id int64
+	PartId int64
+	Device string
+	ReadsCompleted float64
+	ReadsMerged float64
+	SectorsRead float64
+	MillisReading float64
+	WritesCompleted float64
+	WritesMerged float64
+	SectorsWrite float64
+	MillisWriting float64
+	// IoInProgress float64 //not used and calculated diff then all others
+	MillisDoingIo float64
+	WeightedMillisDoingIo float64
+	RecordTime float64
+    IoTotal float64
+	SectorsTotal float64
+
+}
+
 func TransformStat(channel <-chan diskStat.DiskStat) (err error) {
 for {
 		stat := <- channel
@@ -21,107 +42,156 @@ for {
 			if((stat.ReadsCompleted == 0 && stat.WritesCompleted == 0) || partition.MatchString(stat.Device)) {
 				continue
 			}
-			timeDiffMilli,err := getTimeDiffMilli(prevStat.RecordTime, stat.RecordTime)
-			if(nil != err) { fmt.Println(err);continue}
+			diffStat,err := getDiffDiskStat(prevStat, stat);
+			if(nil != err) { fmt.Println(err, diffStat);continue}
+			timeDiffMilli := getTimeDiffMilli(diffStat.RecordTime)
+			readsMerged := getOneSecondAvg(diffStat.ReadsMerged, timeDiffMilli)
+			writesMerged := getOneSecondAvg(diffStat.WritesMerged, timeDiffMilli)
+			writes := getOneSecondAvg(diffStat.WritesCompleted, timeDiffMilli)
+			reads := getOneSecondAvg(diffStat.ReadsCompleted, timeDiffMilli)			
+			sectorsRead := getOneSecondAvg(diffStat.SectorsRead, timeDiffMilli)
+			sectorsWrite := getOneSecondAvg(diffStat.SectorsWrite, timeDiffMilli)
 
-			readsMerged,err := getOneSecondAvg(prevStat.ReadsMerged, stat.ReadsMerged, timeDiffMilli)
-			if(nil != err) { fmt.Println(err);continue}
-			writesMerged,err := getOneSecondAvg(prevStat.WritesMerged, stat.WritesMerged, timeDiffMilli)
-			if(nil != err) { fmt.Println(err);continue}
+			arqsz := getAvgRequestSize(diffStat.SectorsTotal, diffStat.IoTotal)
+			avgQueueSize := getAvgQueueSize(diffStat.WeightedMillisDoingIo, timeDiffMilli)
+			await := getAwait(diffStat.MillisWriting, diffStat.MillisReading, diffStat.IoTotal)
+			rAwait := getSingleAwait(diffStat.ReadsCompleted, diffStat.MillisReading)
+			wAwait := getSingleAwait(diffStat.WritesCompleted, diffStat.MillisWriting)
 
-			writes,err := getOneSecondAvg(prevStat.WritesCompleted, stat.WritesCompleted, timeDiffMilli)
-			if(nil != err) { fmt.Println(err);continue}
-			reads,err := getOneSecondAvg(prevStat.ReadsCompleted, stat.ReadsCompleted, timeDiffMilli)
-			if(nil != err) { fmt.Println(err);continue}
+			util := getUtilization(diffStat.MillisDoingIo, timeDiffMilli)
+			svctm := getAvgServiceTime(diffStat.IoTotal, timeDiffMilli, util)
 			
-			sectorsRead,err := getOneSecondAvgUint(prevStat.SectorsRead, stat.SectorsRead, timeDiffMilli)
-			if(nil != err) { fmt.Println(err);continue}						
-			sectorsWrite,err := getOneSecondAvgUint(prevStat.SectorsWrite, stat.SectorsWrite, timeDiffMilli)
-			if(nil != err) { fmt.Println(err);continue}	
-
-
-			arqsz := getAvgRequestSize(prevStat.SectorsTotal, stat.SectorsTotal, prevStat.IoTotal, stat.IoTotal)
-			avgQueueSize := getAvgQueueSize(prevStat.WeightedMillisDoingIo, stat.WeightedMillisDoingIo, timeDiffMilli)
-
-			util,err := getUtilization(prevStat.MillisDoingIo, stat.MillisDoingIo, timeDiffMilli)
-			if(nil != err) { fmt.Println(err);continue}	
-
-			svctm := getAvgServiceTime(prevStat.IoTotal, stat.IoTotal, timeDiffMilli, util)
-			
-			fmt.Printf( "%s:  rrqm/s %.2f wrqm/s %.2f r/s %.2f w/s %.2f rsize/s %s wsize/s %s avgrq-sz %.2f avgqu-sz %.2f svctm %.2f util %.2f%% \n\n", 
+			fmt.Printf( "%s:  rrqm/s %.2f wrqm/s %.2f r/s %.2f w/s %.2f rsize/s %s wsize/s %s avgrq-sz %.2f avgqu-sz %.2f, await %.2f r_await %.2f w_await %.2f svctm %.2f util %.2f%% \n\n", 
 				stat.Device, readsMerged, writesMerged, reads, writes, humanize.Bytes(uint64(sectorsRead)), 
-					humanize.Bytes(uint64(sectorsWrite)), arqsz, avgQueueSize, svctm, util)
+					humanize.Bytes(uint64(sectorsWrite)), arqsz, avgQueueSize, await, rAwait, wAwait, svctm, util)
 		}
 		LastRawStat[stat.Device] = stat
 	}
 }
 
-func getTimeDiffMilli( old int64,  cur int64) (r float64, err error){
-	if(old >= cur) {
-		err= errors.New("Time has moved backward or not moved at all... impressive!")
-		return
-	}
-	r = float64(cur - old) / 1000000.0 
+func getTimeDiffMilli(diff float64) (r float64) {
+	r = diff / 1000000.0
 	return
 }
 
-func getOneSecondAvg(old int64, cur int64, time float64) (r float64, err error) {
-	if(old > cur) {
-		err= errors.New("A stat has rolled over!")
-		return
-	}
-	r = float64(float64(cur - old) / time) * oneSecondInMilli
+func getOneSecondAvg(diff float64, time float64) (r float64) {
+	r = float64(diff / time) * oneSecondInMilli
 	return
 }
 
-func getOneSecondAvgUint(old uint64, cur uint64, time float64) (r float64, err error) {
-	if(old > cur) {
-		err= errors.New("A stat has rolled over!")
-		return
-	}
-	r = float64(float64(cur - old) / time) * oneSecondInMilli
+// func getOneSecondAvgUint(old uint64, cur uint64, time float64) (r float64, err error) {
+// 	if(old > cur) {
+// 		err= errors.New("A stat has rolled over!")
+// 		return
+// 	}
+// 	r = float64(float64(cur - old) / time) * oneSecondInMilli
+// 	return
+// }
+
+
+
+func getDiffDiskStat(old diskStat.DiskStat, cur diskStat.DiskStat)(r DiskStatDiff, err error) {
+	r.Id = cur.Id
+	r.PartId = cur.PartId
+	r.Device = cur.Device
+	r.ReadsCompleted, err = getDiff(old.ReadsCompleted, cur.ReadsCompleted);
+	if(nil != err){return}
+	r.ReadsMerged, err = getDiff(old.ReadsCompleted, cur.ReadsCompleted);
+	if(nil != err){return}
+	// SectorsRead uint64
+	r.SectorsRead, err = getDiffUint64(old.SectorsRead, cur.SectorsRead);
+	if(nil != err){return}
+	// MillisReading int64
+		r.MillisReading, err = getDiff(old.MillisReading, cur.MillisReading);
+	if(nil != err){return}
+	// WritesCompleted int64
+		r.WritesCompleted, err = getDiff(old.WritesCompleted, cur.WritesCompleted);
+	if(nil != err){return}
+	// WritesMerged int64
+		r.WritesMerged, err = getDiff(old.WritesMerged, cur.WritesMerged);
+	if(nil != err){return}
+	// SectorsWrite uint64
+		r.SectorsWrite, err = getDiffUint64(old.SectorsWrite, cur.SectorsWrite);
+	if(nil != err){return}
+	// MillisWriting int64
+		r.MillisWriting, err = getDiff(old.MillisWriting, cur.MillisWriting);
+	if(nil != err){return}
+	// IoInProgress int64 //this stat seems to have old large then cur most of the time??? 
+	// r.IoInProgress, err = getDiff(old.IoInProgress, cur.IoInProgress);
+	if(nil != err){return}
+	// MillisDoingIo int64
+	 r.MillisDoingIo, err = getDiff(old.MillisDoingIo, cur.MillisDoingIo);
+	if(nil != err){return}
+	// WeightedMillisDoingIo 64
+	r.WeightedMillisDoingIo, err = getDiff(old.WeightedMillisDoingIo, cur.WeightedMillisDoingIo);
+	if(nil != err){return}
+	// RecordTime int64
+	r.RecordTime, err = getDiff(old.RecordTime, cur.RecordTime);
+	if(nil != err){err = nil; fmt.Println(old.RecordTime, cur.RecordTime)}
+ //    IoTotal int64
+	r.IoTotal, err = getDiff(old.IoTotal, cur.IoTotal);
+	if(nil != err){return}
+	// SectorsTotal uint64
+	r.SectorsTotal, err = getDiffUint64(old.SectorsTotal, cur.SectorsTotal);
+	if(nil != err){return}
 	return
 }
 
-func getAvgRequestSize(oldSectorsTotal uint64, curSectorsTotal uint64, oldIoTotal int64, curIoTotal int64) (r float64) {
-	ioTotal := curIoTotal - oldIoTotal 
-	sectorsTotal := curSectorsTotal - oldSectorsTotal 
+func getDiff(old int64, cur int64)(r float64, err error) {
+	if(old > cur) {err=errors.New("Old is newer then current... impressive!");return}
+	r= float64(cur - old)
+	return
+}
 
-	if(0 == ioTotal) {
+func getDiffUint64(old uint64, cur uint64)(r float64, err error) {
+	if(old > cur) {err=errors.New("Old is newer then current... impressive!");return}
+	r= float64(cur - old)
+	return
+}
+
+func getAvgRequestSize(diffSectorsTotal float64, diffIoTotal float64) (r float64) {
+	if(0 == diffIoTotal) {
 		r = 0.00
 		return
 	}
-
-	r = float64(sectorsTotal) / float64(ioTotal)
+	r = float64(diffSectorsTotal) / float64(diffIoTotal)
 	return
 }
 
-func getAvgQueueSize(oldWeightedMillisDoingIo int64, curWeightedMillisDoingIo int64, time float64) (r float64){
-	if(oldWeightedMillisDoingIo > curWeightedMillisDoingIo) {
-		r = 0.00
-		return
-	}
-	r = float64(curWeightedMillisDoingIo - oldWeightedMillisDoingIo) / time;
+func getAvgQueueSize(diffWeightedMillisDoingIo float64, time float64) (r float64){
+	r = diffWeightedMillisDoingIo / time;
+	return
+}
+	// xds->await = (sdc->nr_ios - sdp->nr_ios) ?
+	// 	((sdc->rd_ticks - sdp->rd_ticks) + (sdc->wr_ticks - sdp->wr_ticks)) /
+	// 	((double) (sdc->nr_ios - sdp->nr_ios)) : 0.0;
+func getAwait(diffMillisWriting float64, diffMillisReading float64, diffIoTotal float64) (r float64) {
+	totalRW :=diffMillisWriting + diffMillisReading
+	r = totalRW / diffIoTotal
+	return
+
+}
+
+func getSingleAwait(diffIo float64, diffMillis float64) (r float64) {
+	if(0 == diffIo) {r = 0.00; return}
+	r =  diffMillis / diffIo
 	return
 }
 
-func getAvgServiceTime(oldIoTotal int64, curIoTotal int64, time float64, util float64) (r float64){
+func getAvgServiceTime(diffIoTotal float64, time float64, util float64) (r float64){
 	hz := systemCall.GetClockTicksPerSecond()
-	tput := float64(curIoTotal - oldIoTotal) * float64(hz) / time
+	tput := diffIoTotal * float64(hz) / time
 
 	if(tput <= 0) {r=0.0; return}
 	r = util / tput
 	return
-
-
 }
 
-func getUtilization(old int64, cur int64, time float64) (r float64, err error) {
-	if(old > cur) {
-		err = errors.New("No IO Happened?")
-		return
-	}
-	r =  (float64(cur - old) / (time * 100) * 10.0) * oneSecondInMilli
+func getUtilization(diffMillisDoingIo float64, time float64) (r float64) {
+	r = (float64(diffMillisDoingIo) / (time * 100) * 10.0) * oneSecondInMilli
+	if(r > 100.00) {
+		r = 100.00;	
+	} 
 	return
 }
 
