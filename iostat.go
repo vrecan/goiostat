@@ -40,6 +40,7 @@ func main() {
 
   }
   close(statsTransformChannel)
+  close(statsOutputChannel)
 }
 
 func readAndSendStats(statsTransformChannel chan diskStat.DiskStat) {
