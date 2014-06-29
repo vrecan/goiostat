@@ -157,6 +157,7 @@ func getAvgQueueSize(diffWeightedMillisDoingIo float64, time float64) (r float64
 	// 	((sdc->rd_ticks - sdp->rd_ticks) + (sdc->wr_ticks - sdp->wr_ticks)) /
 	// 	((double) (sdc->nr_ios - sdp->nr_ios)) : 0.0;
 func getAwait(diffMillisWriting float64, diffMillisReading float64, diffIoTotal float64) (r float64) {
+	if(diffIoTotal <= 0) { r= 0.00; return}
 	totalRW :=diffMillisWriting + diffMillisReading
 	r = totalRW / diffIoTotal
 	return
