@@ -5,7 +5,6 @@ import(
     "../systemCall"
     "errors"
     "regexp"
-    "github.com/dustin/go-humanize"
    )
 var LastRawStat = make(map[string]diskStat.DiskStat)	
 var partition = regexp.MustCompile(`\w.*\d`)
@@ -32,7 +31,8 @@ type DiskStatDiff struct {
 
 }
 
-func TransformStat(channel <-chan diskStat.DiskStat) (err error) {
+
+func TransformStat(channel <-chan diskStat.DiskStat, statsOutputChannel chan diskStat.ExtendedIoStats) (err error) {
 for {
 		stat := <- channel
 		prevStat,in := LastRawStat[stat.Device]
@@ -44,26 +44,27 @@ for {
 			}
 			diffStat,err := getDiffDiskStat(prevStat, stat);
 			if(nil != err) { fmt.Println(err, diffStat);continue}
+
 			timeDiffMilli := getTimeDiffMilli(diffStat.RecordTime)
-			readsMerged := getOneSecondAvg(diffStat.ReadsMerged, timeDiffMilli)
-			writesMerged := getOneSecondAvg(diffStat.WritesMerged, timeDiffMilli)
-			writes := getOneSecondAvg(diffStat.WritesCompleted, timeDiffMilli)
-			reads := getOneSecondAvg(diffStat.ReadsCompleted, timeDiffMilli)			
-			sectorsRead := getOneSecondAvg(diffStat.SectorsRead, timeDiffMilli)
-			sectorsWrite := getOneSecondAvg(diffStat.SectorsWrite, timeDiffMilli)
+			eIoStat := diskStat.ExtendedIoStats{}
+			eIoStat.Device = diffStat.Device
+			eIoStat.ReadsMerged = getOneSecondAvg(diffStat.ReadsMerged, timeDiffMilli)
+			eIoStat.WritesMerged = getOneSecondAvg(diffStat.WritesMerged, timeDiffMilli)
+			eIoStat.Writes = getOneSecondAvg(diffStat.WritesCompleted, timeDiffMilli)
+			eIoStat.Reads = getOneSecondAvg(diffStat.ReadsCompleted, timeDiffMilli)			
+			eIoStat.SectorsRead = getOneSecondAvg(diffStat.SectorsRead, timeDiffMilli)
+			eIoStat.SectorsWrite = getOneSecondAvg(diffStat.SectorsWrite, timeDiffMilli)
 
-			arqsz := getAvgRequestSize(diffStat.SectorsTotal, diffStat.IoTotal)
-			avgQueueSize := getAvgQueueSize(diffStat.WeightedMillisDoingIo, timeDiffMilli)
-			await := getAwait(diffStat.MillisWriting, diffStat.MillisReading, diffStat.IoTotal)
-			rAwait := getSingleAwait(diffStat.ReadsCompleted, diffStat.MillisReading)
-			wAwait := getSingleAwait(diffStat.WritesCompleted, diffStat.MillisWriting)
+			eIoStat.Arqsz = getAvgRequestSize(diffStat.SectorsTotal, diffStat.IoTotal)
+			eIoStat.AvgQueueSize = getAvgQueueSize(diffStat.WeightedMillisDoingIo, timeDiffMilli)
+			eIoStat.Await = getAwait(diffStat.MillisWriting, diffStat.MillisReading, diffStat.IoTotal)
+			eIoStat.RAwait = getSingleAwait(diffStat.ReadsCompleted, diffStat.MillisReading)
+			eIoStat.WAwait = getSingleAwait(diffStat.WritesCompleted, diffStat.MillisWriting)
 
-			util := getUtilization(diffStat.MillisDoingIo, timeDiffMilli)
-			svctm := getAvgServiceTime(diffStat.IoTotal, timeDiffMilli, util)
+			eIoStat.Util = getUtilization(diffStat.MillisDoingIo, timeDiffMilli)
+			eIoStat.Svctm = getAvgServiceTime(diffStat.IoTotal, timeDiffMilli, eIoStat.Util)
 			
-			fmt.Printf( "%s:  rrqm/s %.2f wrqm/s %.2f r/s %.2f w/s %.2f rsize/s %s wsize/s %s avgrq-sz %.2f avgqu-sz %.2f, await %.2f r_await %.2f w_await %.2f svctm %.2f util %.2f%% \n\n", 
-				stat.Device, readsMerged, writesMerged, reads, writes, humanize.Bytes(uint64(sectorsRead)), 
-					humanize.Bytes(uint64(sectorsWrite)), arqsz, avgQueueSize, await, rAwait, wAwait, svctm, util)
+			statsOutputChannel <- eIoStat
 		}
 		LastRawStat[stat.Device] = stat
 	}
@@ -78,16 +79,6 @@ func getOneSecondAvg(diff float64, time float64) (r float64) {
 	r = float64(diff / time) * oneSecondInMilli
 	return
 }
-
-// func getOneSecondAvgUint(old uint64, cur uint64, time float64) (r float64, err error) {
-// 	if(old > cur) {
-// 		err= errors.New("A stat has rolled over!")
-// 		return
-// 	}
-// 	r = float64(float64(cur - old) / time) * oneSecondInMilli
-// 	return
-// }
-
 
 
 func getDiffDiskStat(old diskStat.DiskStat, cur diskStat.DiskStat)(r DiskStatDiff, err error) {

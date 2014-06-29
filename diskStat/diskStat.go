@@ -24,6 +24,23 @@ type DiskStat struct {
 
 }
 
+type ExtendedIoStats struct {
+	Device string
+	ReadsMerged float64
+	WritesMerged float64
+	Writes float64
+	Reads float64
+	SectorsRead float64
+	SectorsWrite float64
+	Arqsz float64
+	AvgQueueSize float64
+	Await float64
+	RAwait float64
+	WAwait float64
+	Util float64
+	Svctm float64
+}
+
 /*
   Simple function that takes a string and converts it to a stat
   TODO: Figure out better way to map string to struct

@@ -10,6 +10,7 @@ import (
    "time"
    "./diskStat"
    "./ioStatTransform"
+   "./statsOutput"
    "flag"
    // "fmt"
    // "runtime"
@@ -29,7 +30,10 @@ func main() {
   // ch := make(chan os.Signal)
   // signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
   statsTransformChannel := make(chan diskStat.DiskStat, 10)
-  go ioStatTransform.TransformStat(statsTransformChannel)
+  statsOutputChannel := make(chan diskStat.ExtendedIoStats, 10)
+  go ioStatTransform.TransformStat(statsTransformChannel, statsOutputChannel)
+  go statsOutput.Output(statsOutputChannel)
+
   for {
     readAndSendStats(statsTransformChannel)
     time.Sleep(time.Second * time.Duration(*interval))
