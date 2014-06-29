@@ -54,16 +54,16 @@ for {
 
 			arqsz := getAvgRequestSize(diffStat.SectorsTotal, diffStat.IoTotal)
 			avgQueueSize := getAvgQueueSize(diffStat.WeightedMillisDoingIo, timeDiffMilli)
-			await := getAwait(prevStat.SectorsTotal, stat.SectorsTotal, prevStat.IoTotal, stat.IoTotal)
+			await := getAwait(diffStat.MillisWriting, diffStat.MillisReading, diffStat.IoTotal)
+			rAwait := getSingleAwait(diffStat.ReadsCompleted, diffStat.MillisReading)
+			wAwait := getSingleAwait(diffStat.WritesCompleted, diffStat.MillisWriting)
 
-			util,err := getUtilization(diffStat.MillisDoingIo, timeDiffMilli)
-			if(nil != err) { fmt.Println(err);continue}	
-
-			svctm := getAvgServiceTime(prevStat.IoTotal, stat.IoTotal, timeDiffMilli, util)
+			util := getUtilization(diffStat.MillisDoingIo, timeDiffMilli)
+			svctm := getAvgServiceTime(diffStat.IoTotal, timeDiffMilli, util)
 			
-			fmt.Printf( "%s:  rrqm/s %.2f wrqm/s %.2f r/s %.2f w/s %.2f rsize/s %s wsize/s %s avgrq-sz %.2f avgqu-sz %.2f await %.2f  svctm %.2f util %.2f%% \n\n", 
+			fmt.Printf( "%s:  rrqm/s %.2f wrqm/s %.2f r/s %.2f w/s %.2f rsize/s %s wsize/s %s avgrq-sz %.2f avgqu-sz %.2f, await %.2f r_await %.2f w_await %.2f svctm %.2f util %.2f%% \n\n", 
 				stat.Device, readsMerged, writesMerged, reads, writes, humanize.Bytes(uint64(sectorsRead)), 
-					humanize.Bytes(uint64(sectorsWrite)), arqsz, avgQueueSize, await, svctm, util)
+					humanize.Bytes(uint64(sectorsWrite)), arqsz, avgQueueSize, await, rAwait, wAwait, svctm, util)
 		}
 		LastRawStat[stat.Device] = stat
 	}
@@ -120,11 +120,11 @@ func getDiffDiskStat(old diskStat.DiskStat, cur diskStat.DiskStat)(r DiskStatDif
 	// r.IoInProgress, err = getDiff(old.IoInProgress, cur.IoInProgress);
 	if(nil != err){return}
 	// MillisDoingIo int64
-		// r.MillisDoingIo, err = getDiff(old.MillisDoingIo, cur.MillisDoingIo);
+	 r.MillisDoingIo, err = getDiff(old.MillisDoingIo, cur.MillisDoingIo);
 	if(nil != err){return}
 	// WeightedMillisDoingIo 64
 	r.WeightedMillisDoingIo, err = getDiff(old.WeightedMillisDoingIo, cur.WeightedMillisDoingIo);
-	if(nil != err){r.WeightedMillisDoingIo = 0.00}
+	if(nil != err){return}
 	// RecordTime int64
 	r.RecordTime, err = getDiff(old.RecordTime, cur.RecordTime);
 	if(nil != err){err = nil; fmt.Println(old.RecordTime, cur.RecordTime)}
@@ -154,41 +154,41 @@ func getAvgRequestSize(diffSectorsTotal float64, diffIoTotal float64) (r float64
 		r = 0.00
 		return
 	}
-
 	r = float64(diffSectorsTotal) / float64(diffIoTotal)
 	return
 }
 
 func getAvgQueueSize(diffWeightedMillisDoingIo float64, time float64) (r float64){
-	if(0 == diffWeightedMillisDoingIo) {r=0.00; return}
-	r = float64(diffWeightedMillisDoingIo) / time;
+	r = diffWeightedMillisDoingIo / time;
 	return
 }
 	// xds->await = (sdc->nr_ios - sdp->nr_ios) ?
 	// 	((sdc->rd_ticks - sdp->rd_ticks) + (sdc->wr_ticks - sdp->wr_ticks)) /
 	// 	((double) (sdc->nr_ios - sdp->nr_ios)) : 0.0;
-func getAwait(oldSectorsTotal uint64, curSectorsTotal uint64, oldIoTotal int64, curIoTotal int64) (r float64) {
-	sectors := float64(curSectorsTotal - oldSectorsTotal)
-	io := float64(curIoTotal - oldIoTotal)
-	if 0 <= sectors || 0 <= io {r=0.00; return}
-	r = sectors / io
+func getAwait(diffMillisWriting float64, diffMillisReading float64, diffIoTotal float64) (r float64) {
+	totalRW :=diffMillisWriting + diffMillisReading
+	r = totalRW / diffIoTotal
 	return
 
 }
 
-func getAvgServiceTime(oldIoTotal int64, curIoTotal int64, time float64, util float64) (r float64){
+func getSingleAwait(diffIo float64, diffMillis float64) (r float64) {
+	if(0 == diffIo) {r = 0.00; return}
+	r =  diffMillis / diffIo
+	return
+}
+
+func getAvgServiceTime(diffIoTotal float64, time float64, util float64) (r float64){
 	hz := systemCall.GetClockTicksPerSecond()
-	tput := float64(curIoTotal - oldIoTotal) * float64(hz) / time
+	tput := diffIoTotal * float64(hz) / time
 
 	if(tput <= 0) {r=0.0; return}
 	r = util / tput
 	return
-
-
 }
 
-func getUtilization(diffMillisDoingIo float64, time float64) (r float64, err error) {
-	r = (diffMillisDoingIo / (time * 100) * 10.0) * oneSecondInMilli
+func getUtilization(diffMillisDoingIo float64, time float64) (r float64) {
+	r = (float64(diffMillisDoingIo) / (time * 100) * 10.0) * oneSecondInMilli
 	if(r > 100.00) {
 		r = 100.00;	
 	} 
