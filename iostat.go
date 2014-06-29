@@ -12,6 +12,7 @@ import (
    "./ioStatTransform"
    "flag"
    // "fmt"
+   // "runtime"
 
 )
 /**
@@ -27,17 +28,17 @@ func main() {
   // // Handle SIGINT and SIGTERM.
   // ch := make(chan os.Signal)
   // signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
-  statsTransformChannel := make(chan diskStat.DiskStat, 1)
+  statsTransformChannel := make(chan diskStat.DiskStat, 10)
+  go ioStatTransform.TransformStat(statsTransformChannel)
   for {
     readAndSendStats(statsTransformChannel)
     time.Sleep(time.Second * time.Duration(*interval))
+
   }
   close(statsTransformChannel)
 }
 
 func readAndSendStats(statsTransformChannel chan diskStat.DiskStat) {
-    
-    go ioStatTransform.TransformStat(statsTransformChannel)
 
     file,err := os.Open(linuxDiskStats)
     if nil != err {

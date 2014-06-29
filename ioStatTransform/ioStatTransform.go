@@ -41,15 +41,16 @@ for {
 
 
 			arqsz := getAvgRequestSize(prevStat.SectorsTotal, stat.SectorsTotal, prevStat.IoTotal, stat.IoTotal)
+			avgQueueSize := getAvgQueueSize(prevStat.WeightedMillisDoingIo, stat.WeightedMillisDoingIo, timeDiffMilli)
 
 			util,err := getUtilization(prevStat.MillisDoingIo, stat.MillisDoingIo, timeDiffMilli)
 			if(nil != err) { fmt.Println(err);continue}	
 
 			svctm := getAvgServiceTime(prevStat.IoTotal, stat.IoTotal, timeDiffMilli, util)
 			
-			fmt.Printf( "%s:  rrqm/s %.2f wrqm/s %.2f r/s %.2f w/s %.2f rsize/s %s wsize/s %s avgrq-sz %.2f svctm %.2f util %.2f%% \n\n", 
+			fmt.Printf( "%s:  rrqm/s %.2f wrqm/s %.2f r/s %.2f w/s %.2f rsize/s %s wsize/s %s avgrq-sz %.2f avgqu-sz %.2f svctm %.2f util %.2f%% \n\n", 
 				stat.Device, readsMerged, writesMerged, reads, writes, humanize.Bytes(uint64(sectorsRead)), 
-					humanize.Bytes(uint64(sectorsWrite)), arqsz, svctm, util)
+					humanize.Bytes(uint64(sectorsWrite)), arqsz, avgQueueSize, svctm, util)
 		}
 		LastRawStat[stat.Device] = stat
 	}
@@ -92,6 +93,15 @@ func getAvgRequestSize(oldSectorsTotal uint64, curSectorsTotal uint64, oldIoTota
 	}
 
 	r = float64(sectorsTotal) / float64(ioTotal)
+	return
+}
+
+func getAvgQueueSize(oldWeightedMillisDoingIo int64, curWeightedMillisDoingIo int64, time float64) (r float64){
+	if(oldWeightedMillisDoingIo > curWeightedMillisDoingIo) {
+		r = 0.00
+		return
+	}
+	r = float64(curWeightedMillisDoingIo - oldWeightedMillisDoingIo) / time;
 	return
 }
 
