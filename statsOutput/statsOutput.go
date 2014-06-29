@@ -1,4 +1,4 @@
-package statsOutputLog
+package statsOutput
    import (
    "../diskStat"
    "fmt"

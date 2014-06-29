@@ -10,7 +10,7 @@ import (
    "time"
    "./diskStat"
    "./ioStatTransform"
-   "./statsOutputLog"
+   "./statsOutput"
    "flag"
    // "fmt"
    // "runtime"
@@ -32,7 +32,7 @@ func main() {
   statsTransformChannel := make(chan diskStat.DiskStat, 10)
   statsOutputChannel := make(chan diskStat.ExtendedIoStats, 10)
   go ioStatTransform.TransformStat(statsTransformChannel, statsOutputChannel)
-  go statsOutputLog.Output(statsOutputChannel)
+  go statsOutput.Output(statsOutputChannel)
 
   for {
     readAndSendStats(statsTransformChannel)
