@@ -1,8 +1,8 @@
 package ioStatTransform
 import(
    "fmt"
-    "../diskStat"
-    "../systemCall"
+    "github.com/CapillarySoftware/goiostat/diskStat"
+    "github.com/CapillarySoftware/goiostat/systemCall"
     "errors"
     "regexp"
    )
