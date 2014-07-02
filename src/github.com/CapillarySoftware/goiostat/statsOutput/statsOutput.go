@@ -1,6 +1,6 @@
 package statsOutput
    import (
-   "../diskStat"
+   "github.com/CapillarySoftware/goiostat/diskStat"
    "fmt"
    "github.com/dustin/go-humanize"
    )
