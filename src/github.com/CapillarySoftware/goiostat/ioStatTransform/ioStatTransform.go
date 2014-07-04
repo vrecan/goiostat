@@ -27,7 +27,7 @@ type DiskStatDiff struct {
 	WeightedMillisDoingIo float64
 	RecordTime float64
     IoTotal float64
-	SectorsTotal float64
+	SectorsTotalRaw float64
 
 }
 
@@ -55,7 +55,7 @@ for {
 			eIoStat.SectorsRead = getOneSecondAvg(diffStat.SectorsRead, timeDiffMilli)
 			eIoStat.SectorsWrite = getOneSecondAvg(diffStat.SectorsWrite, timeDiffMilli)
 
-			eIoStat.Arqsz = getAvgRequestSize(diffStat.SectorsTotal, diffStat.IoTotal)
+			eIoStat.Arqsz = getAvgRequestSize(diffStat.SectorsTotalRaw, diffStat.IoTotal)
 			eIoStat.AvgQueueSize = getAvgQueueSize(diffStat.WeightedMillisDoingIo, timeDiffMilli)
 			eIoStat.Await = getAwait(diffStat.MillisWriting, diffStat.MillisReading, diffStat.IoTotal)
 			eIoStat.RAwait = getSingleAwait(diffStat.ReadsCompleted, diffStat.MillisReading)
@@ -122,8 +122,8 @@ func getDiffDiskStat(old diskStat.DiskStat, cur diskStat.DiskStat)(r DiskStatDif
  //    IoTotal int64
 	r.IoTotal, err = getDiff(old.IoTotal, cur.IoTotal);
 	if(nil != err){return}
-	// SectorsTotal uint64
-	r.SectorsTotal, err = getDiffUint64(old.SectorsTotal, cur.SectorsTotal);
+	// SectorsTotalRaw uint64
+	r.SectorsTotalRaw, err = getDiffUint64(old.SectorsTotalRaw, cur.SectorsTotalRaw);
 	if(nil != err){return}
 	return
 }
@@ -140,12 +140,12 @@ func getDiffUint64(old uint64, cur uint64)(r float64, err error) {
 	return
 }
 
-func getAvgRequestSize(diffSectorsTotal float64, diffIoTotal float64) (r float64) {
+func getAvgRequestSize(diffSectorsTotalRaw float64, diffIoTotal float64) (r float64) {
 	if(0 == diffIoTotal) {
 		r = 0.00
 		return
 	}
-	r = float64(diffSectorsTotal) / float64(diffIoTotal)
+	r = float64(diffSectorsTotalRaw) / float64(diffIoTotal)
 	return
 }
 

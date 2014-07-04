@@ -2,6 +2,7 @@ package diskStat
 import (
    "strconv"
    "time"
+   "errors"
    )
 type DiskStat struct {
 	Id int64
@@ -20,7 +21,7 @@ type DiskStat struct {
 	WeightedMillisDoingIo int64
 	RecordTime int64
     IoTotal int64
-	SectorsTotal uint64
+	SectorsTotalRaw uint64
 
 }
 
@@ -49,6 +50,7 @@ func LineToStat(line []string) (stat DiskStat, err error){
 	var tmp int64
 	var sectorsReadRaw uint64
 	var sectorsWriteRaw uint64
+	if(len(line) < 14) {err=errors.New("Line is not a valid lenght for disk stats");return}
 
 	stat.RecordTime = time.Now().UnixNano()
 
@@ -135,7 +137,7 @@ func LineToStat(line []string) (stat DiskStat, err error){
 	stat.WeightedMillisDoingIo = tmp	
 
 	stat.IoTotal = stat.ReadsCompleted + stat.WritesCompleted
-	stat.SectorsTotal = sectorsReadRaw + sectorsWriteRaw
+	stat.SectorsTotalRaw = sectorsReadRaw + sectorsWriteRaw
 
   	return stat, err;
 
