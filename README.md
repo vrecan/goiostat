@@ -7,9 +7,10 @@ Implementation of iostat in go.
 Currently only support linux 2.6 kernel.
 
 <h2>install directions</h2>
-<pre><code>export GOPATH=$HOME/goiostat
-export PATH=$PATH:$GOPATH/bin 
+<pre><code>
+export GOPATH=$HOME/goiostat
 export GOBIN=$GOPATH/bin
+export PATH=$PATH:$GOBIN
 sh bin/install_dependencies.sh
 
 go install src/github.com/CapillarySoftware/goiostat/iostat.go
