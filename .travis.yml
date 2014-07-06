@@ -6,6 +6,8 @@ install:
  - go get github.com/onsi/ginkgo
  - go get code.google.com/p/go.tools/cmd/cover
  - go install src/github.com/CapillarySoftware/goiostat/iostat.go
+ - go install github.com/onsi/ginkgo/ginkgo
+ - go install go get github.com/onsi/gomega
  - export PATH=$PATH:$HOME/gopath/bin
 
 script: bin/run_tests_travis.sh
