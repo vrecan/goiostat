@@ -179,7 +179,7 @@ func getDiffUint64(old uint64, cur uint64) (r float64, err error) {
 }
 
 func getAvgRequestSize(diffSectorsTotalRaw float64, diffIoTotal float64) (r float64) {
-	if 0 == diffIoTotal {
+	if diffIoTotal <= 0 {
 		r = 0.00
 		return
 	}
@@ -207,7 +207,7 @@ func getAwait(diffMillisWriting float64, diffMillisReading float64, diffIoTotal 
 }
 
 func getSingleAwait(diffIo float64, diffMillis float64) (r float64) {
-	if 0 == diffIo {
+	if diffIo <= 0 {
 		r = 0.00
 		return
 	}
