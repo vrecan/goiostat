@@ -7,6 +7,6 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Iostat", func() {
+var _ = Describe("Goiostat", func() {
 
 })

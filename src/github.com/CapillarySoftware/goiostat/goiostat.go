@@ -2,8 +2,6 @@ package main
 
 import (
 	"os"
-	// "os/signal"
-	// "syscall"
 	"bufio"
 	"flag"
 	"github.com/CapillarySoftware/goiostat/diskStat"
@@ -13,7 +11,6 @@ import (
 	"strings"
 	"time"
 	// "fmt"
-	// "runtime"
 )
 
 /**
