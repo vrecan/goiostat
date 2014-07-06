@@ -69,7 +69,9 @@ func LineToStat(line []string) (stat DiskStat, err error) {
 		return stat, err
 	}
 	stat.PartId = tmp
-
+	if line[2] == "" {
+		errors.New("Empty string for device")
+	}
 	stat.Device = line[2]
 
 	tmp, err = strconv.ParseInt(line[3], 10, 64)

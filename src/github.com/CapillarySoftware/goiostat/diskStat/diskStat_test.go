@@ -14,8 +14,9 @@ type error interface {
 
 var _ = Describe("DiskStat", func() {
 	var (
-		stats DiskStat
-		err   error
+		stats    DiskStat
+		err      error
+		goodLine []string
 	)
 
 	Describe("Parse valid Stat line", func() {
@@ -72,5 +73,22 @@ var _ = Describe("DiskStat", func() {
 			Expect(stats.SectorsTotalRaw).Should(Equal(uint64(16)))
 		})
 
+	})
+
+	Describe("Invalid Lines Parsing", func() {
+		BeforeEach(func() {
+			goodLine = []string{"1", "2", "3", "4", "5", "6", "7", "8", "9",
+				"10", "11", "12", "13", "14"}
+		})
+
+		It("Empty test for all fields", func() {
+
+			for index, value := range goodLine {
+				goodLine[index] = ""
+				stats, err = LineToStat(goodLine)
+				Expect(err).ShouldNot(Equal(BeNil()))
+				goodLine[index] = value
+			}
+		})
 	})
 })
