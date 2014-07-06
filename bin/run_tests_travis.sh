@@ -4,4 +4,4 @@
 #go get github.com/dustin/go-humanize
 #go get github.com/onsi/gomega
 #go get github.com/onsi/ginkgo
-ginkgo -cover -r 
+ginkgo -cover -r src/github.com/CapillarySoftware/
