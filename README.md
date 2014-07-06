@@ -10,7 +10,7 @@ Currently only support linux 2.6 kernel.
 <pre><code>
 export GOPATH=$HOME/goiostat
 export GOBIN=$GOPATH/bin
-export PATH=$PATH:$GOBINk
+export PATH=$PATH:$GOBIN
 sh bin/install_dependencies.sh
 
 go install src/github.com/CapillarySoftware/goiostat/iostat.go
