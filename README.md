@@ -12,4 +12,5 @@ export GOBIN=$GOPATH/bin
 sh bin/install_dependencies.sh
 
 go install src/github.com/CapillarySoftware/goiostat/iostat.go
+
 </code></pre>
