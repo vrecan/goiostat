@@ -28,6 +28,6 @@ var _ = Describe("ZmqOutput", func() {
 		float64(0),
 		float64(0),
 	}
-	output.SendStats(stats)
+	output.SendStats(&stats)
 	})
 })

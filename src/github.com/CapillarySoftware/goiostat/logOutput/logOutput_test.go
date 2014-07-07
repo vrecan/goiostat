@@ -5,14 +5,19 @@ import (
 	. "github.com/CapillarySoftware/goiostat/diskStat"
 	. "github.com/CapillarySoftware/goiostat/outputInterface"
 	. "github.com/onsi/ginkgo"
-	// . "github.com/onsi/gomega"
+	. "github.com/onsi/gomega"
 )
 
-func testInterface(output Output, stats ExtendedIoStats) {
-	output.SendStats(stats)
+func testInterface(output Output, stats *ExtendedIoStats) {
+	err := output.SendStats(stats)
+	Expect(err).ShouldNot(Equal(BeNil()))
 }
 
 var _ = Describe("Test LogOutput Interface", func() {
+
+	It("basic interface test", func(){
+
+
 	output := LogOutput{}
 	stats := ExtendedIoStats{
 		"Device",
@@ -30,5 +35,6 @@ var _ = Describe("Test LogOutput Interface", func() {
 		float64(0),
 		float64(0),
 	}
-	testInterface(output, stats)
+	testInterface(output, &stats)
+	})
 })

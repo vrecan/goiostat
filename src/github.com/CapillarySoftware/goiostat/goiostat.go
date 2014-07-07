@@ -24,8 +24,8 @@ const linuxDiskStats = "/proc/diskstats"
 
 func main() {
 	flag.Parse()
-	statsTransformChannel := make(chan diskStat.DiskStat, 10)
-	statsOutputChannel := make(chan diskStat.ExtendedIoStats, 10)
+	statsTransformChannel := make(chan *diskStat.DiskStat, 10)
+	statsOutputChannel := make(chan *diskStat.ExtendedIoStats, 10)
 
     // c := make(chan os.Signal, 1)
     // signal.Notify(c, os.Interrupt)
@@ -52,7 +52,7 @@ func main() {
 	close(statsOutputChannel)
 }
 
-func readAndSendStats(statsTransformChannel chan diskStat.DiskStat) {
+func readAndSendStats(statsTransformChannel chan *diskStat.DiskStat) {
 
 	file, err := os.Open(linuxDiskStats)
 	if nil != err {
@@ -67,7 +67,7 @@ func readAndSendStats(statsTransformChannel chan diskStat.DiskStat) {
 		if nil != err {
 			log.Fatal(err)
 		}
-		statsTransformChannel <- stat
+		statsTransformChannel <- &stat
 	}
 
 	if err := scanner.Err(); err != nil {
