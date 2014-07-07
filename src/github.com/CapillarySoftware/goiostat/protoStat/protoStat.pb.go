@@ -21,9 +21,9 @@ var _ = proto.Marshal
 var _ = math.Inf
 
 type ProtoStat struct {
-	Key              *string `protobuf:"bytes,1,req,name=key" json:"key,omitempty"`
-	Value            *uint64 `protobuf:"varint,2,opt,name=value" json:"value,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
+	Key              *string  `protobuf:"bytes,1,req,name=key" json:"key,omitempty"`
+	Value            *float64 `protobuf:"fixed64,2,opt,name=value" json:"value,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
 }
 
 func (m *ProtoStat) Reset()         { *m = ProtoStat{} }
@@ -37,7 +37,7 @@ func (m *ProtoStat) GetKey() string {
 	return ""
 }
 
-func (m *ProtoStat) GetValue() uint64 {
+func (m *ProtoStat) GetValue() float64 {
 	if m != nil && m.Value != nil {
 		return *m.Value
 	}

@@ -2,5 +2,5 @@ package protoStat;
 
 message protoStat {
 	required string key = 1;
-	optional uint64 value = 2;
+	optional double value = 2;
 }
