@@ -1,8 +1,8 @@
 package protoStat_test
 
 import (
-	. "github.com/CapillarySoftware/goiostat/protoStat"
 	. "github.com/CapillarySoftware/goiostat/diskStat"
+	. "github.com/CapillarySoftware/goiostat/protoStat"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	// "fmt"
@@ -13,12 +13,12 @@ var _ = Describe("Conversions", func() {
 	var _ = Describe("Validate Fields", func() {
 		var (
 			eStats ExtendedIoStats
-			stats []ProtoStat
-			err error
+			stats  []ProtoStat
+			err    error
 		)
-		
-		BeforeEach(func(){
-		eStats = ExtendedIoStats{
+
+		BeforeEach(func() {
+			eStats = ExtendedIoStats{
 				"Device",
 				float64(0),
 				float64(1),
@@ -36,14 +36,14 @@ var _ = Describe("Conversions", func() {
 			}
 			stats, err = GetProtoStats(&eStats)
 			Expect(len(stats)).Should(Equal(13))
-			Expect(err).Should(BeNil())	
+			Expect(err).Should(BeNil())
 		})
 
-		It("validate All Field Values for protoStat",func(){
-			for index,protoStat := range stats {
+		It("validate All Field Values for protoStat", func() {
+			for index, protoStat := range stats {
 				//validate we didn't lose percision
-				if(index == 12) {
-					Expect(*protoStat.Value).Should(Equal(float64(12.1)))	
+				if index == 12 {
+					Expect(*protoStat.Value).Should(Equal(float64(12.1)))
 				} else {
 					Expect(*protoStat.Value).Should(Equal(float64(index)))
 				}
@@ -51,7 +51,7 @@ var _ = Describe("Conversions", func() {
 			}
 		})
 
-		It("Validate FieldNames in right format", func(){
+		It("Validate FieldNames in right format", func() {
 			Expect(*stats[0].Key).Should(Equal("Device_ReadsMerged"))
 		})
 	})

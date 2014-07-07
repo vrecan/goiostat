@@ -3,10 +3,10 @@ package ioStatTransform_test
 import (
 	. "github.com/CapillarySoftware/goiostat/ioStatTransform"
 
+	"fmt"
+	. "github.com/CapillarySoftware/goiostat/diskStat"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "github.com/CapillarySoftware/goiostat/diskStat"
-	"fmt"
 )
 
 type error interface {
@@ -18,12 +18,12 @@ var _ = Describe("IoStatTransform", func() {
 	Describe("IntegrationTest", func() {
 
 		var (
-			goodLine []string
-			stats DiskStat
-			err   error
+			goodLine              []string
+			stats                 DiskStat
+			err                   error
 			statsTransformChannel chan *DiskStat
-			statsOutputChannel chan *ExtendedIoStats 
-			outStat *ExtendedIoStats
+			statsOutputChannel    chan *ExtendedIoStats
+			outStat               *ExtendedIoStats
 		)
 
 		BeforeEach(func() {
@@ -35,7 +35,7 @@ var _ = Describe("IoStatTransform", func() {
 
 		})
 
-		It("Go routine test", func(){
+		It("Go routine test", func() {
 			expStat := ExtendedIoStats{
 				"Device",
 				float64(0),
@@ -62,11 +62,9 @@ var _ = Describe("IoStatTransform", func() {
 			Expect(&nstat).ShouldNot(Equal(BeNil()))
 			statsTransformChannel <- &stats
 			statsTransformChannel <- &nstat
-			outStat = <- statsOutputChannel
+			outStat = <-statsOutputChannel
 			fmt.Println(outStat)
 			Expect(outStat).Should(Equal(&expStat))
-
-			
 
 		})
 	})
