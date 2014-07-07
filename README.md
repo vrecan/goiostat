@@ -15,5 +15,6 @@ sh bin/install_dependencies.sh
 
 go install src/github.com/CapillarySoftware/goiostat/iostat.go
 
+if you want zeromq output make sure to install zmq4 from http://zeromq.org/intro:get-the-software
 
 </code></pre>

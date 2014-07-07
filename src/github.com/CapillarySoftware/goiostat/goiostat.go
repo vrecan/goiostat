@@ -22,6 +22,7 @@ Go version of iostat, pull stats from proc and optionally log or send to a zeroM
 
 var interval = flag.Int("interval", 5, "Interval that stats should be reported.")
 var outputType = flag.String("output", "stdout", "output should be one of the following types (stdout,zmq)")
+var zmqUrl = flag.String("zmqUrl", "tcp://localhost:5400", "ZmqUrl valid formats (tcp://localhost:[port], ipc:///location/file.ipc)")
 
 const linuxDiskStats = "/proc/diskstats"
 
@@ -46,7 +47,10 @@ func main() {
 	case "stdout":
 		output = logOutput.LogOutput{}
 	case "zmq":
-		output = zmqOutput.ZmqOutput{}
+		zmq := zmqOutput.ZmqOutput{}
+		zmq.Connect(*zmqUrl)
+		defer zmq.Close()
+		output = zmq
 	default:
 		fmt.Println("Defaulting to stdout")
 		output = logOutput.LogOutput{}
