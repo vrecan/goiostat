@@ -36,7 +36,7 @@ type DiskStatDiff struct {
 func TransformStat(channel <-chan *diskStat.DiskStat, statsOutputChannel chan *diskStat.ExtendedIoStats) (err error) {
 	for {
 		stat := <-channel
-		if(nil == stat) {
+		if nil == stat {
 			break
 		}
 		prevStat, in := LastRawStat[stat.Device]

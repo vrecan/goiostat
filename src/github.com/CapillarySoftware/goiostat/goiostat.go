@@ -1,19 +1,19 @@
 package main
 
 import (
-	"os"
 	"bufio"
 	"flag"
+	"fmt"
 	"github.com/CapillarySoftware/goiostat/diskStat"
 	"github.com/CapillarySoftware/goiostat/ioStatTransform"
-	"github.com/CapillarySoftware/goiostat/statsOutput"
 	"github.com/CapillarySoftware/goiostat/logOutput"
-	"github.com/CapillarySoftware/goiostat/zmqOutput"
 	"github.com/CapillarySoftware/goiostat/outputInterface"
+	"github.com/CapillarySoftware/goiostat/statsOutput"
+	"github.com/CapillarySoftware/goiostat/zmqOutput"
 	"log"
+	"os"
 	"strings"
 	"time"
-	"fmt"
 )
 
 /**
@@ -30,28 +30,28 @@ func main() {
 	statsTransformChannel := make(chan *diskStat.DiskStat, 10)
 	statsOutputChannel := make(chan *diskStat.ExtendedIoStats, 10)
 
-    // c := make(chan os.Signal, 1)
-    // signal.Notify(c, os.Interrupt)
-    // signal.Notify(c, syscall.SIGTERM)
-    // go func() {
-    //     <-c
-    //     log.Info("Caught signal, shutting down")
-    //     close(statsTransformChannel)
-    //     close(statsOutputChannel)
-    //     log.Info("Shutdown complete")
-    //     os.Exit(0)
-    // }()
-    var output outputInterface.Output
-    switch *outputType {
-    	case "stdout":
-    		output = logOutput.LogOutput{}
-    	case "zmq":
-    		output = zmqOutput.ZmqOutput{}
-    	default:
-    		fmt.Println("Defaulting to stdout")
-    		output = logOutput.LogOutput{}
-    }
-	
+	// c := make(chan os.Signal, 1)
+	// signal.Notify(c, os.Interrupt)
+	// signal.Notify(c, syscall.SIGTERM)
+	// go func() {
+	//     <-c
+	//     log.Info("Caught signal, shutting down")
+	//     close(statsTransformChannel)
+	//     close(statsOutputChannel)
+	//     log.Info("Shutdown complete")
+	//     os.Exit(0)
+	// }()
+	var output outputInterface.Output
+	switch *outputType {
+	case "stdout":
+		output = logOutput.LogOutput{}
+	case "zmq":
+		output = zmqOutput.ZmqOutput{}
+	default:
+		fmt.Println("Defaulting to stdout")
+		output = logOutput.LogOutput{}
+	}
+
 	go ioStatTransform.TransformStat(statsTransformChannel, statsOutputChannel)
 
 	go statsOutput.Output(statsOutputChannel, output)
