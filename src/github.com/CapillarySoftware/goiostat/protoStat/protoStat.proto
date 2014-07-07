@@ -1,4 +1,4 @@
-package zmqOutput;
+package protoStat;
 
 message protoStat {
 	required string key = 1;
