@@ -1,0 +1,6 @@
+package protoStat;
+
+message protoStat {
+	required string key = 1;
+	optional double value = 2;
+}

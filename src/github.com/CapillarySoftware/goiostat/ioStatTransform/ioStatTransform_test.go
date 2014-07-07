@@ -21,17 +21,17 @@ var _ = Describe("IoStatTransform", func() {
 			goodLine []string
 			stats DiskStat
 			err   error
-			statsTransformChannel chan DiskStat
-			statsOutputChannel chan ExtendedIoStats 
-			outStat ExtendedIoStats
+			statsTransformChannel chan *DiskStat
+			statsOutputChannel chan *ExtendedIoStats 
+			outStat *ExtendedIoStats
 		)
 
 		BeforeEach(func() {
 			goodLine = []string{"1", "2", "Device", "4", "5", "6", "7", "8", "9",
 				"10", "11", "12", "13", "14"}
 			stats, err = LineToStat(goodLine)
-			statsTransformChannel = make(chan DiskStat, 10)
-			statsOutputChannel = make(chan ExtendedIoStats, 10)
+			statsTransformChannel = make(chan *DiskStat, 10)
+			statsOutputChannel = make(chan *ExtendedIoStats, 10)
 
 		})
 
@@ -57,12 +57,14 @@ var _ = Describe("IoStatTransform", func() {
 			defer close(statsOutputChannel)
 
 			go TransformStat(statsTransformChannel, statsOutputChannel)
-			statsTransformChannel <- stats
-			statsTransformChannel <- nstat
 
+			Expect(&stats).ShouldNot(Equal(BeNil()))
+			Expect(&nstat).ShouldNot(Equal(BeNil()))
+			statsTransformChannel <- &stats
+			statsTransformChannel <- &nstat
 			outStat = <- statsOutputChannel
 			fmt.Println(outStat)
-			Expect(outStat).Should(Equal(expStat))
+			Expect(outStat).Should(Equal(&expStat))
 
 			
 

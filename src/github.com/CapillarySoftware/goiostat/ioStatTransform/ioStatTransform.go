@@ -33,9 +33,12 @@ type DiskStatDiff struct {
 	SectorsTotalRaw       float64
 }
 
-func TransformStat(channel <-chan diskStat.DiskStat, statsOutputChannel chan diskStat.ExtendedIoStats) (err error) {
+func TransformStat(channel <-chan *diskStat.DiskStat, statsOutputChannel chan *diskStat.ExtendedIoStats) (err error) {
 	for {
 		stat := <-channel
+		if(nil == stat) {
+			break
+		}
 		prevStat, in := LastRawStat[stat.Device]
 
 		if in {
@@ -43,7 +46,7 @@ func TransformStat(channel <-chan diskStat.DiskStat, statsOutputChannel chan dis
 			if (stat.ReadsCompleted == 0 && stat.WritesCompleted == 0) || partition.MatchString(stat.Device) {
 				continue
 			}
-			diffStat, err := getDiffDiskStat(prevStat, stat)
+			diffStat, err := getDiffDiskStat(&prevStat, stat)
 			if nil != err {
 				fmt.Println(err, diffStat)
 				continue
@@ -68,10 +71,11 @@ func TransformStat(channel <-chan diskStat.DiskStat, statsOutputChannel chan dis
 			eIoStat.Util = getUtilization(diffStat.MillisDoingIo, timeDiffMilli)
 			eIoStat.Svctm = getAvgServiceTime(diffStat.IoTotal, timeDiffMilli, eIoStat.Util)
 
-			statsOutputChannel <- eIoStat
+			statsOutputChannel <- &eIoStat
 		}
-		LastRawStat[stat.Device] = stat
+		LastRawStat[stat.Device] = *stat
 	}
+	return
 }
 
 func getTimeDiffMilli(diff float64) (r float64) {
@@ -84,7 +88,7 @@ func getOneSecondAvg(diff float64, time float64) (r float64) {
 	return
 }
 
-func getDiffDiskStat(old diskStat.DiskStat, cur diskStat.DiskStat) (r DiskStatDiff, err error) {
+func getDiffDiskStat(old *diskStat.DiskStat, cur *diskStat.DiskStat) (r DiskStatDiff, err error) {
 	r.Id = cur.Id
 	r.PartId = cur.PartId
 	r.Device = cur.Device

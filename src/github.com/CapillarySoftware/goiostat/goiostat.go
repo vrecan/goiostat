@@ -8,10 +8,12 @@ import (
 	"github.com/CapillarySoftware/goiostat/ioStatTransform"
 	"github.com/CapillarySoftware/goiostat/statsOutput"
 	"github.com/CapillarySoftware/goiostat/logOutput"
+	"github.com/CapillarySoftware/goiostat/zmqOutput"
+	"github.com/CapillarySoftware/goiostat/outputInterface"
 	"log"
 	"strings"
 	"time"
-	// "fmt"
+	"fmt"
 )
 
 /**
@@ -19,17 +21,37 @@ Go version of iostat, pull stats from proc and optionally log or send to a zeroM
 */
 
 var interval = flag.Int("interval", 5, "Interval that stats should be reported.")
+var outputType = flag.String("output", "stdout", "output should be one of the following types (stdout,zmq)")
 
 const linuxDiskStats = "/proc/diskstats"
 
 func main() {
 	flag.Parse()
-	// // Handle SIGINT and SIGTERM.
-	// ch := make(chan os.Signal)
-	// signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
-	statsTransformChannel := make(chan diskStat.DiskStat, 10)
-	statsOutputChannel := make(chan diskStat.ExtendedIoStats, 10)
-	output := logOutput.LogOutput{}
+	statsTransformChannel := make(chan *diskStat.DiskStat, 10)
+	statsOutputChannel := make(chan *diskStat.ExtendedIoStats, 10)
+
+    // c := make(chan os.Signal, 1)
+    // signal.Notify(c, os.Interrupt)
+    // signal.Notify(c, syscall.SIGTERM)
+    // go func() {
+    //     <-c
+    //     log.Info("Caught signal, shutting down")
+    //     close(statsTransformChannel)
+    //     close(statsOutputChannel)
+    //     log.Info("Shutdown complete")
+    //     os.Exit(0)
+    // }()
+    var output outputInterface.Output
+    switch *outputType {
+    	case "stdout":
+    		output = logOutput.LogOutput{}
+    	case "zmq":
+    		output = zmqOutput.ZmqOutput{}
+    	default:
+    		fmt.Println("Defaulting to stdout")
+    		output = logOutput.LogOutput{}
+    }
+	
 	go ioStatTransform.TransformStat(statsTransformChannel, statsOutputChannel)
 
 	go statsOutput.Output(statsOutputChannel, output)
@@ -43,7 +65,7 @@ func main() {
 	close(statsOutputChannel)
 }
 
-func readAndSendStats(statsTransformChannel chan diskStat.DiskStat) {
+func readAndSendStats(statsTransformChannel chan *diskStat.DiskStat) {
 
 	file, err := os.Open(linuxDiskStats)
 	if nil != err {
@@ -58,7 +80,7 @@ func readAndSendStats(statsTransformChannel chan diskStat.DiskStat) {
 		if nil != err {
 			log.Fatal(err)
 		}
-		statsTransformChannel <- stat
+		statsTransformChannel <- &stat
 	}
 
 	if err := scanner.Err(); err != nil {
