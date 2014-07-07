@@ -8,10 +8,12 @@ import (
 	"github.com/CapillarySoftware/goiostat/ioStatTransform"
 	"github.com/CapillarySoftware/goiostat/statsOutput"
 	"github.com/CapillarySoftware/goiostat/logOutput"
+	"github.com/CapillarySoftware/goiostat/zmqOutput"
+	"github.com/CapillarySoftware/goiostat/outputInterface"
 	"log"
 	"strings"
 	"time"
-	// "fmt"
+	"fmt"
 )
 
 /**
@@ -19,6 +21,7 @@ Go version of iostat, pull stats from proc and optionally log or send to a zeroM
 */
 
 var interval = flag.Int("interval", 5, "Interval that stats should be reported.")
+var outputType = flag.String("output", "stdout", "output should be one of the following types (stdout,zmq)")
 
 const linuxDiskStats = "/proc/diskstats"
 
@@ -38,7 +41,17 @@ func main() {
     //     log.Info("Shutdown complete")
     //     os.Exit(0)
     // }()
-	output := logOutput.LogOutput{}
+    var output outputInterface.Output
+    switch *outputType {
+    	case "stdout":
+    		output = logOutput.LogOutput{}
+    	case "zmq":
+    		output = zmqOutput.ZmqOutput{}
+    	default:
+    		fmt.Println("Defaulting to stdout")
+    		output = logOutput.LogOutput{}
+    }
+	
 	go ioStatTransform.TransformStat(statsTransformChannel, statsOutputChannel)
 
 	go statsOutput.Output(statsOutputChannel, output)

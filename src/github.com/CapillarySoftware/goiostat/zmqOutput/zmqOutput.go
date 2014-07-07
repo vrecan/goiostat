@@ -10,10 +10,9 @@ import(
 type ZmqOutput struct {
 }
 
-func (l ZmqOutput) SendStats (eStat *ExtendedIoStats) {
+func (l ZmqOutput) SendStats (eStat *ExtendedIoStats)(err error) {
 	var(
 		stats []ProtoStat
-		err error
 		)
 
 		stats, err = GetProtoStats(eStat)
@@ -28,4 +27,5 @@ func (l ZmqOutput) SendStats (eStat *ExtendedIoStats) {
 			//just print the encoded data for now... soon this will actually send a queue
 			fmt.Println(data)
 		}
+		return
 }
