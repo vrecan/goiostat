@@ -24,11 +24,20 @@ const linuxDiskStats = "/proc/diskstats"
 
 func main() {
 	flag.Parse()
-	// // Handle SIGINT and SIGTERM.
-	// ch := make(chan os.Signal)
-	// signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
 	statsTransformChannel := make(chan diskStat.DiskStat, 10)
 	statsOutputChannel := make(chan diskStat.ExtendedIoStats, 10)
+
+    // c := make(chan os.Signal, 1)
+    // signal.Notify(c, os.Interrupt)
+    // signal.Notify(c, syscall.SIGTERM)
+    // go func() {
+    //     <-c
+    //     log.Info("Caught signal, shutting down")
+    //     close(statsTransformChannel)
+    //     close(statsOutputChannel)
+    //     log.Info("Shutdown complete")
+    //     os.Exit(0)
+    // }()
 	output := logOutput.LogOutput{}
 	go ioStatTransform.TransformStat(statsTransformChannel, statsOutputChannel)
 

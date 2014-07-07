@@ -1,0 +1,6 @@
+package zmqOutput;
+
+message protoStat {
+	required string key = 1;
+	optional uint64 value = 2;
+}
