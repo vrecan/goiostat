@@ -15,7 +15,7 @@ type ZmqOutput struct {
 }
 
 func (z *ZmqOutput) Connect(url string) {
-	z.sendSocket, z.err = zmq.NewSocket(zmq.PULL)
+	z.sendSocket, z.err = zmq.NewSocket(zmq.PUSH)
 	z.sendSocket.Connect(url)
 	// fmt.Println(*z)
 }
@@ -27,6 +27,9 @@ func (z *ZmqOutput) send(data *[]byte) (r int, err error) {
 		return
 	}
 	r, err = z.sendSocket.SendBytes(*data, 0)
+	if nil != err {
+		fmt.Println(err)
+	}
 	return
 }
 
@@ -37,7 +40,6 @@ func (z *ZmqOutput) Close() {
 }
 
 func (z *ZmqOutput) SendStats(eStat *ExtendedIoStats) (err error) {
-	var r int
 	if nil == z.sendSocket {
 		err = errors.New("Nil socket, call zmqOutput.Connect() before trying to send stats")
 		return
@@ -55,8 +57,7 @@ func (z *ZmqOutput) SendStats(eStat *ExtendedIoStats) (err error) {
 		if nil != err {
 			errors.New("Failed to marshal stat message : ")
 		}
-		r, err = z.send(&data)
-		fmt.Println("R value: ", r)
+		_, err = z.send(&data)
 	}
 	return
 }
