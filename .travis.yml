@@ -11,6 +11,7 @@ install:
  - go get code.google.com/p/goprotobuf/proto
  - go install github.com/onsi/ginkgo/ginkgo
  - go install github.com/onsi/gomega
+ - apt-get install libzmq3-dev
  - go get github.com/pebbe/zmq4
 
 script: bin/run_tests_travis.sh
