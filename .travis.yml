@@ -1,17 +1,12 @@
 language: go
-
-build_deps:
-  pkg.installed:
-    - pkgs:
-      - git
-      - g++
-      - make
-      - libzmq3-dev
+before_install:
+ - sudo apt-get install libzmq3-dev
 
 install:
  - export GOPATH=`pwd`
  - export GOBIN=$GOPATH/bin
  - export PATH=$PATH:$GOBIN
+ - go get github.com/pebbe/zmq4
  - go get github.com/dustin/go-humanize
  - go get github.com/onsi/gomega
  - go get github.com/onsi/ginkgo
@@ -19,6 +14,5 @@ install:
  - go get code.google.com/p/goprotobuf/proto
  - go install github.com/onsi/ginkgo/ginkgo
  - go install github.com/onsi/gomega
- - go get github.com/pebbe/zmq4
 
 script: bin/run_tests_travis.sh
