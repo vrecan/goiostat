@@ -6,7 +6,7 @@ import (
 	"fmt"
 	. "github.com/CapillarySoftware/goiostat/diskStat"
 	. "github.com/CapillarySoftware/goiostat/protoStat"
-	zmq "github.com/pebbe/zmq4"
+	zmq "github.com/pebbe/zmq3"
 )
 
 type ZmqOutput struct {
