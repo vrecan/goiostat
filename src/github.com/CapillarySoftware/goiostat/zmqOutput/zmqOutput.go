@@ -14,12 +14,14 @@ type ZmqOutput struct {
 	err        error
 }
 
-func (z ZmqOutput) Connect(url string) {
+func (z *ZmqOutput) Connect(url string) {
 	z.sendSocket, z.err = zmq.NewSocket(zmq.PULL)
 	z.sendSocket.Connect(url)
+	// fmt.Println(*z)
 }
 
-func (z ZmqOutput) send(data *[]byte) (r int, err error) {
+func (z *ZmqOutput) send(data *[]byte) (r int, err error) {
+	// fmt.Println(*z)
 	if nil == z.sendSocket {
 		err = errors.New("Nil Socket, can't send")
 		return
@@ -28,13 +30,14 @@ func (z ZmqOutput) send(data *[]byte) (r int, err error) {
 	return
 }
 
-func (z ZmqOutput) Close() {
+func (z *ZmqOutput) Close() {
 	if nil != z.sendSocket {
 		z.sendSocket.Close()
 	}
 }
 
-func (z ZmqOutput) SendStats(eStat *ExtendedIoStats) (err error) {
+func (z *ZmqOutput) SendStats(eStat *ExtendedIoStats) (err error) {
+	var r int
 	if nil == z.sendSocket {
 		err = errors.New("Nil socket, call zmqOutput.Connect() before trying to send stats")
 		return
@@ -45,15 +48,15 @@ func (z ZmqOutput) SendStats(eStat *ExtendedIoStats) (err error) {
 
 	stats, err = GetProtoStats(eStat)
 	if nil != err {
-		fmt.Println(err)
+		return //return the error
 	}
 	for _, stat := range stats {
 		data, err := proto.Marshal(&stat)
 		if nil != err {
 			errors.New("Failed to marshal stat message : ")
 		}
-		//just print the encoded data for now... soon this will actually send a queue
-		z.send(&data)
+		r, err = z.send(&data)
+		fmt.Println("R value: ", r)
 	}
 	return
 }
