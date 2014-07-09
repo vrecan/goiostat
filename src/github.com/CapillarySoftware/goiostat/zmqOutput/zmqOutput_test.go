@@ -52,26 +52,23 @@ var _ = Describe("ZmqOutput", func() {
 		Expect(err).ShouldNot(BeNil())
 	})
 
-	It("Send to recv socket and validate we get what we expect", func() {
-		output := ZmqOutput{}
-		defer output.Close()
-		output.Connect(url)
+	//this test validates zmq works but also sucks for an integration test
+	// It("Send to recv socket and validate we get what we expect", func() {
+	// 	output := ZmqOutput{}
+	// 	defer output.Close()
+	// 	output.Connect(url)
 
-		recv, err := zmq.NewSocket(zmq.PULL)
-		Expect(err).Should(BeNil())
-		defer recv.Close()
+	// 	recv, err := zmq.NewSocket(zmq.PULL)
+	// 	Expect(err).Should(BeNil())
+	// 	defer recv.Close()
 
-		recv.Bind(url)
-		go sendStats(output, &eStat, 1)
+	// 	recv.Bind(url)
+	// 	go sendStats(output, &eStat, 1)
 
-		for i := 0; i <= 12; i++ {
-			s, err := recv.RecvBytes(0)
-			fmt.Println("bytes: ", s)
-			Expect(err).Should(BeNil())
-		}
-		s, err := recv.RecvBytes(0)
-		Expect(err).Should(BeNil())
-		fmt.Println("last: ", s)
-
-	})
+	// 	for i := 0; i <= 12; i++ {
+	// 		s, err := recv.RecvBytes(0)
+	// 		fmt.Println("bytes: ", s)
+	// 		Expect(err).Should(BeNil())
+	// 	}
+	// })
 })
