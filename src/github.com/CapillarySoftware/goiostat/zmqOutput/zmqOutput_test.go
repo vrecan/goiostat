@@ -5,9 +5,9 @@ import (
 	. "github.com/CapillarySoftware/goiostat/zmqOutput"
 	. "github.com/onsi/ginkgo"
 	// . "github.com/CapillarySoftware/goiostat/protoStat"
-	"fmt"
+	// "fmt"
 	. "github.com/onsi/gomega"
-	zmq "github.com/pebbe/zmq3"
+	// zmq "github.com/pebbe/zmq3"
 )
 
 func sendStats(output ZmqOutput, eStat *ExtendedIoStats, sendCount int) {
@@ -34,7 +34,7 @@ var _ = Describe("ZmqOutput", func() {
 		float64(0),
 	}
 
-	url := "ipc:///tmp/testOutput.ipc"
+	url := "ipc:///tmp/testOutput1.ipc"
 
 	It("Testing basic send stats", func() {
 		output := ZmqOutput{}
