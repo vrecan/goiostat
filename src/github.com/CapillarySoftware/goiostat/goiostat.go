@@ -45,15 +45,15 @@ func main() {
 	var output outputInterface.Output
 	switch *outputType {
 	case "stdout":
-		output = logOutput.LogOutput{}
+		output = &logOutput.LogOutput{}
 	case "zmq":
-		zmq := zmqOutput.ZmqOutput{}
+		zmq := &zmqOutput.ZmqOutput{}
 		zmq.Connect(*zmqUrl)
 		defer zmq.Close()
 		output = zmq
 	default:
 		fmt.Println("Defaulting to stdout")
-		output = logOutput.LogOutput{}
+		output = &logOutput.LogOutput{}
 	}
 
 	go ioStatTransform.TransformStat(statsTransformChannel, statsOutputChannel)
