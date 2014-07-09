@@ -17,7 +17,7 @@ var _ = Describe("Test LogOutput Interface", func() {
 
 	It("basic interface test", func() {
 
-		output := LogOutput{}
+		output := &LogOutput{}
 		stats := ExtendedIoStats{
 			"Device",
 			float64(0),
