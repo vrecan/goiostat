@@ -15,5 +15,8 @@ sh bin/install_dependencies.sh
 
 go install src/github.com/CapillarySoftware/goiostat/iostat.go
 
+if you want zeromq output make sure to install zmq3 from http://zeromq.org/intro:get-the-software
+on mac just use brew:
+brew install homebrew/versions/zeromq32
 
 </code></pre>

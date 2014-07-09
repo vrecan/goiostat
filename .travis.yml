@@ -1,9 +1,12 @@
 language: go
+before_install:
+ - sudo apt-get install libzmq3-dev
 
 install:
  - export GOPATH=`pwd`
  - export GOBIN=$GOPATH/bin
  - export PATH=$PATH:$GOBIN
+ - go get github.com/pebbe/zmq3
  - go get github.com/dustin/go-humanize
  - go get github.com/onsi/gomega
  - go get github.com/onsi/ginkgo
