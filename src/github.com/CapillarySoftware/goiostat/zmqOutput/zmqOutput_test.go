@@ -4,6 +4,7 @@ import (
 	. "github.com/CapillarySoftware/goiostat/diskStat"
 	. "github.com/CapillarySoftware/goiostat/zmqOutput"
 	. "github.com/onsi/ginkgo"
+	. "github.com/CapillarySoftware/goiostat/protocols"
 	// . "github.com/CapillarySoftware/goiostat/protoStat"
 	// "fmt"
 	. "github.com/onsi/gomega"
@@ -37,7 +38,7 @@ var _ = Describe("ZmqOutput", func() {
 	url := "ipc:///tmp/testOutput1.ipc"
 
 	It("Testing basic send stats", func() {
-		output := ZmqOutput{}
+		output := ZmqOutput{Proto: PProtoBuffers}
 		output.Connect(url)
 		defer output.Close()
 
@@ -46,7 +47,7 @@ var _ = Describe("ZmqOutput", func() {
 	})
 
 	It("Call sendStats without initializing socket", func() {
-		output := ZmqOutput{}
+		output := ZmqOutput{Proto: PProtoBuffers}
 		defer output.Close()
 		err := output.SendStats(&eStat)
 		Expect(err).ShouldNot(BeNil())

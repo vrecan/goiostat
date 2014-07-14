@@ -6,10 +6,12 @@ import (
 	"fmt"
 	. "github.com/CapillarySoftware/goiostat/diskStat"
 	. "github.com/CapillarySoftware/goiostat/protoStat"
+	. "github.com/CapillarySoftware/goiostat/protocols"
 	zmq "github.com/pebbe/zmq3"
 )
 
 type ZmqOutput struct {
+	Proto Protocol	
 	sendSocket *zmq.Socket
 	err        error
 }
@@ -40,6 +42,21 @@ func (z *ZmqOutput) Close() {
 }
 
 func (z *ZmqOutput) SendStats(eStat *ExtendedIoStats) (err error) {
+	switch z.Proto {
+		case PProtoBuffers : {
+			err = z.SendProtoBuffers(eStat)
+		}
+		
+		default : {
+			err = errors.New("zmqOutput doesn't support the type given... ")
+			return
+		}
+	}
+	return
+}
+
+
+func (z *ZmqOutput) SendProtoBuffers(eStat *ExtendedIoStats) (err error) {
 	if nil == z.sendSocket {
 		err = errors.New("Nil socket, call zmqOutput.Connect() before trying to send stats")
 		return

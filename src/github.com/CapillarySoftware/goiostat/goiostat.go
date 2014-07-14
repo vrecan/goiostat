@@ -3,18 +3,21 @@ package main
 import (
 	"bufio"
 	"flag"
-	"fmt"
+	// "fmt"
 	"github.com/CapillarySoftware/goiostat/diskStat"
 	"github.com/CapillarySoftware/goiostat/ioStatTransform"
 	"github.com/CapillarySoftware/goiostat/logOutput"
 	"github.com/CapillarySoftware/goiostat/outputInterface"
 	"github.com/CapillarySoftware/goiostat/statsOutput"
 	"github.com/CapillarySoftware/goiostat/zmqOutput"
+	. "github.com/CapillarySoftware/goiostat/protocols"
 	"log"
 	"os"
 	"strings"
 	"time"
 )
+
+
 
 /**
 Go version of iostat, pull stats from proc and optionally log or send to a zeroMQ
@@ -23,6 +26,7 @@ Go version of iostat, pull stats from proc and optionally log or send to a zeroM
 var interval = flag.Int("interval", 5, "Interval that stats should be reported.")
 var outputType = flag.String("output", "stdout", "output should be one of the following types (stdout,zmq)")
 var zmqUrl = flag.String("zmqUrl", "tcp://localhost:5400", "ZmqUrl valid formats (tcp://localhost:[port], ipc:///location/file.ipc)")
+var protocolType = flag.String("protocol", "", "Valid protocol types are (protobuffers, json")
 
 const linuxDiskStats = "/proc/diskstats"
 
@@ -43,17 +47,32 @@ func main() {
 	//     os.Exit(0)
 	// }()
 	var output outputInterface.Output
+	proto := PStdOut
+
+	switch *protocolType {
+		case "protobuffers": {
+			proto = PProtoBuffers
+		}
+		case "json" : {
+			proto = PJson
+		}
+		default: {
+			if(*outputType == "zmq") {
+				proto = PProtoBuffers		
+			}else if(*outputType == "stdout") {
+				proto = PStdOut
+			}
+		}
+	}
+
 	switch *outputType {
-	case "stdout":
-		output = &logOutput.LogOutput{}
 	case "zmq":
-		zmq := &zmqOutput.ZmqOutput{}
+		zmq := &zmqOutput.ZmqOutput{Proto: proto}
 		zmq.Connect(*zmqUrl)
 		defer zmq.Close()
 		output = zmq
 	default:
-		fmt.Println("Defaulting to stdout")
-		output = &logOutput.LogOutput{}
+		output = &logOutput.LogOutput{proto}
 	}
 
 	go ioStatTransform.TransformStat(statsTransformChannel, statsOutputChannel)
