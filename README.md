@@ -2,7 +2,7 @@ goiostat
 ========
 [![Build Status](https://travis-ci.org/CapillarySoftware/goiostat.png)](https://travis-ci.org/CapillarySoftware/goiostat)
 
-Implementation of iostat in go that allows you to send data over zeromq with protobuffers.
+Implementation of iostat in go that allows you to send data over zeromq with protobuffers or json.
 
 Currently only support linux 2.6 kernel.
 
