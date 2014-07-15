@@ -2,6 +2,7 @@ package zmqOutput
 
 import (
 	"code.google.com/p/goprotobuf/proto"
+	"encoding/json"
 	"errors"
 	"fmt"
 	. "github.com/CapillarySoftware/goiostat/diskStat"
@@ -11,7 +12,7 @@ import (
 )
 
 type ZmqOutput struct {
-	Proto Protocol	
+	Proto      Protocol
 	sendSocket *zmq.Socket
 	err        error
 }
@@ -43,18 +44,23 @@ func (z *ZmqOutput) Close() {
 
 func (z *ZmqOutput) SendStats(eStat *ExtendedIoStats) (err error) {
 	switch z.Proto {
-		case PProtoBuffers : {
+	case PProtoBuffers:
+		{
 			err = z.SendProtoBuffers(eStat)
 		}
-		
-		default : {
+	case PJson:
+		{
+			err = z.SendJson(eStat)
+		}
+
+	default:
+		{
 			err = errors.New("zmqOutput doesn't support the type given... ")
 			return
 		}
 	}
 	return
 }
-
 
 func (z *ZmqOutput) SendProtoBuffers(eStat *ExtendedIoStats) (err error) {
 	if nil == z.sendSocket {
@@ -70,11 +76,26 @@ func (z *ZmqOutput) SendProtoBuffers(eStat *ExtendedIoStats) (err error) {
 		return //return the error
 	}
 	for _, stat := range stats {
-		data, err := proto.Marshal(&stat)
-		if nil != err {
-			errors.New("Failed to marshal stat message : ")
+		data, mErr := proto.Marshal(&stat)
+		if nil != mErr {
+			err = mErr
+			return
 		}
 		_, err = z.send(&data)
 	}
+	return
+}
+
+func (z *ZmqOutput) SendJson(eStat *ExtendedIoStats) (err error) {
+	if nil == z.sendSocket {
+		err = errors.New("Nil socket, call zmqOutput.Connect() before trying to send stats")
+		return
+	}
+
+	data, err := json.Marshal(&eStat)
+	if nil != err {
+		return
+	}
+	_, err = z.send(&data)
 	return
 }
