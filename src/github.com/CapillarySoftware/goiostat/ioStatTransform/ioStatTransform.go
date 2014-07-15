@@ -13,6 +13,8 @@ var partition = regexp.MustCompile(`\w.*\d`)
 
 const oneSecondInMilli = 1000
 
+//DiskStatDiff struct for all extended io stats storing just the difference between
+//the current and the last.
 type DiskStatDiff struct {
 	Id              int64
 	PartId          int64
@@ -33,6 +35,7 @@ type DiskStatDiff struct {
 	SectorsTotalRaw       float64
 }
 
+//TransformStat goroutine function to transform the stats and send to the stats output channel.
 func TransformStat(channel <-chan *diskStat.DiskStat, statsOutputChannel chan *diskStat.ExtendedIoStats) (err error) {
 	for {
 		stat := <-channel
@@ -164,6 +167,7 @@ func getDiffDiskStat(old *diskStat.DiskStat, cur *diskStat.DiskStat) (r DiskStat
 	return
 }
 
+//getDiff gets old and current stat.
 func getDiff(old int64, cur int64) (r float64, err error) {
 	if old > cur {
 		err = errors.New("Old is newer then current... impressive!")
@@ -173,6 +177,7 @@ func getDiff(old int64, cur int64) (r float64, err error) {
 	return
 }
 
+//getDiffUint64 gets old and current stat.
 func getDiffUint64(old uint64, cur uint64) (r float64, err error) {
 	if old > cur {
 		err = errors.New("Old is newer then current... impressive!")
@@ -182,6 +187,7 @@ func getDiffUint64(old uint64, cur uint64) (r float64, err error) {
 	return
 }
 
+//getAvgRequestSize get the avg request size for a disk.
 func getAvgRequestSize(diffSectorsTotalRaw float64, diffIoTotal float64) (r float64) {
 	if diffIoTotal <= 0 {
 		r = 0.00
@@ -191,14 +197,13 @@ func getAvgRequestSize(diffSectorsTotalRaw float64, diffIoTotal float64) (r floa
 	return
 }
 
+//getAvgQueueSize get the avg queue size for a disk.
 func getAvgQueueSize(diffWeightedMillisDoingIo float64, time float64) (r float64) {
 	r = diffWeightedMillisDoingIo / time
 	return
 }
 
-// xds->await = (sdc->nr_ios - sdp->nr_ios) ?
-// 	((sdc->rd_ticks - sdp->rd_ticks) + (sdc->wr_ticks - sdp->wr_ticks)) /
-// 	((double) (sdc->nr_ios - sdp->nr_ios)) : 0.0;
+//getAwait get average wait time for a disk.
 func getAwait(diffMillisWriting float64, diffMillisReading float64, diffIoTotal float64) (r float64) {
 	if diffIoTotal <= 0 {
 		r = 0.00
@@ -210,6 +215,7 @@ func getAwait(diffMillisWriting float64, diffMillisReading float64, diffIoTotal 
 
 }
 
+//getSingleAwait get single await time used for parsing read or write await times
 func getSingleAwait(diffIo float64, diffMillis float64) (r float64) {
 	if diffIo <= 0 {
 		r = 0.00
@@ -219,6 +225,7 @@ func getSingleAwait(diffIo float64, diffMillis float64) (r float64) {
 	return
 }
 
+//getAvgServiceTime get the avg service time for a disk.
 func getAvgServiceTime(diffIoTotal float64, time float64, util float64) (r float64) {
 	hz := systemCall.GetClockTicksPerSecond()
 	tput := diffIoTotal * float64(hz) / time
@@ -231,6 +238,7 @@ func getAvgServiceTime(diffIoTotal float64, time float64, util float64) (r float
 	return
 }
 
+//getUtilization get a single disks utilization percentage
 func getUtilization(diffMillisDoingIo float64, time float64) (r float64) {
 	r = (float64(diffMillisDoingIo) / (time * 100) * 10.0) * oneSecondInMilli
 	if r > 100.00 {

@@ -1,13 +1,15 @@
 package protoStat
 
+//protoStat Package built to manage protobuffer stats messages.
+
 import (
 	"bytes"
 	"errors"
 	. "github.com/CapillarySoftware/goiostat/diskStat"
 	"reflect"
-	// "fmt"
 )
 
+//GetProtoStats get a slice of protostats from extendedIOStats.
 func GetProtoStats(eStat *ExtendedIoStats) (stats []ProtoStat, err error) {
 
 	deviceName := eStat.Device

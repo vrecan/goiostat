@@ -1,5 +1,6 @@
 package diskStat
 
+//diskStat parse raw disk stats from a string.
 import (
 	"errors"
 	"strconv"

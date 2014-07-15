@@ -1,5 +1,7 @@
 package zmqOutput
 
+//zmqOutput Package that allows you to send stats over zeromq.
+
 import (
 	"code.google.com/p/goprotobuf/proto"
 	"encoding/json"
