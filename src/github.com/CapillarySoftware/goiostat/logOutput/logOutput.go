@@ -1,5 +1,7 @@
 package logOutput
 
+//logOutput Simple logout package to manage outputing info to stdout.
+
 import (
 	"encoding/json"
 	"errors"

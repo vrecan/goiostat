@@ -1,5 +1,8 @@
 package main
 
+//main  goiostat application that allows you to send send extended iostat info
+//over zmq using protobuffers or json.
+
 import (
 	"bufio"
 	"flag"
@@ -8,16 +11,14 @@ import (
 	"github.com/CapillarySoftware/goiostat/ioStatTransform"
 	"github.com/CapillarySoftware/goiostat/logOutput"
 	"github.com/CapillarySoftware/goiostat/outputInterface"
+	. "github.com/CapillarySoftware/goiostat/protocols"
 	"github.com/CapillarySoftware/goiostat/statsOutput"
 	"github.com/CapillarySoftware/goiostat/zmqOutput"
-	. "github.com/CapillarySoftware/goiostat/protocols"
 	"log"
 	"os"
 	"strings"
 	"time"
 )
-
-
 
 /**
 Go version of iostat, pull stats from proc and optionally log or send to a zeroMQ
@@ -50,16 +51,19 @@ func main() {
 	proto := PStdOut
 
 	switch *protocolType {
-		case "protobuffers": {
+	case "protobuffers":
+		{
 			proto = PProtoBuffers
 		}
-		case "json" : {
+	case "json":
+		{
 			proto = PJson
 		}
-		default: {
-			if(*outputType == "zmq") {
-				proto = PProtoBuffers		
-			}else if(*outputType == "stdout") {
+	default:
+		{
+			if *outputType == "zmq" {
+				proto = PProtoBuffers
+			} else if *outputType == "stdout" {
 				proto = PStdOut
 			}
 		}
