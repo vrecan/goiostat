@@ -1,6 +1,5 @@
 package systemCall
 
-//systemCall package that contains C system calls.
 /*
 #include <unistd.h>
 #include <sys/types.h>
