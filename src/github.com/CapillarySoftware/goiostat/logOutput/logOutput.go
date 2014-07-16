@@ -17,6 +17,9 @@ type LogOutput struct {
 	Proto Protocol
 }
 
+const (
+)
+
 func (l *LogOutput) SendStats(stat *ExtendedIoStats) (err error) {
 
 	switch l.Proto {
@@ -48,5 +51,6 @@ func jsonOut(stat *ExtendedIoStats) (err error) {
 	var d []byte
 	d, err = json.Marshal(*stat)
 	os.Stdout.Write(d)
+	os.Stdout.Write([]byte("\n"))
 	return
 }
