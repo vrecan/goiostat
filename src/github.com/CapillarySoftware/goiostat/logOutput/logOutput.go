@@ -48,5 +48,6 @@ func jsonOut(stat *ExtendedIoStats) (err error) {
 	var d []byte
 	d, err = json.Marshal(*stat)
 	os.Stdout.Write(d)
+	os.Stdout.Write([]byte("\n"))
 	return
 }
