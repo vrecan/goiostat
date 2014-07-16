@@ -9,7 +9,7 @@ import (
 )
 
 var LastRawStat = make(map[string]diskStat.DiskStat)
-var partition = regexp.MustCompile(`\w.*\d`)
+var partition = regexp.MustCompile(`\w.*[^-]\d`)
 
 const oneSecondInMilli = 1000
 
@@ -35,6 +35,10 @@ type DiskStatDiff struct {
 	SectorsTotalRaw       float64
 }
 
+func IsPartition(device *string) (r bool) {
+	return partition.MatchString(*device)
+}
+
 //TransformStat goroutine function to transform the stats and send to the stats output channel.
 func TransformStat(channel <-chan *diskStat.DiskStat, statsOutputChannel chan *diskStat.ExtendedIoStats) (err error) {
 	for {
@@ -46,7 +50,7 @@ func TransformStat(channel <-chan *diskStat.DiskStat, statsOutputChannel chan *d
 
 		if in {
 			//ignore partitions with no history of activity
-			if (stat.ReadsCompleted == 0 && stat.WritesCompleted == 0) || partition.MatchString(stat.Device) {
+			if (stat.ReadsCompleted == 0 && stat.WritesCompleted == 0) ||  IsPartition(&stat.Device){
 				continue
 			}
 			diffStat, err := getDiffDiskStat(&prevStat, stat)
