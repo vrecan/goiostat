@@ -24,4 +24,4 @@ deploy:
   on:
     repo: CapillarySoftware/goiostat
     tags: true
-    all_branches: true
+    branch: master
