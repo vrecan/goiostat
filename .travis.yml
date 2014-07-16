@@ -22,3 +22,4 @@ deploy:
   file: bin/goiostat
   on:
     repo: CapillarySoftware/goiostat
+    tags: true
