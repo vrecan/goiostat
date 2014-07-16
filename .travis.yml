@@ -20,6 +20,8 @@ deploy:
   api_key:
     secure: cAfvm2u93f2+NVWn0KOVgjQKl/ZiRO579l+2hm0BN3A+0ptgNuY2wxonhpfy5S5j9cVohm6XyaEdD+TYPQJXm1XVCb7PvPCHdgk833pgBZd79lKy+N/Uz2fd9V3Al3Y/57+eP4V263Z+8/YYDttrqB1NOQ7cX2xAV4Ql3tf2hY4=
   file: bin/goiostat
+  skip_cleanup: true
   on:
     repo: CapillarySoftware/goiostat
     tags: true
+    branch: master
