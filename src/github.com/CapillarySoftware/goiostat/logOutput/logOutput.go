@@ -17,9 +17,6 @@ type LogOutput struct {
 	Proto Protocol
 }
 
-const (
-)
-
 func (l *LogOutput) SendStats(stat *ExtendedIoStats) (err error) {
 
 	switch l.Proto {
