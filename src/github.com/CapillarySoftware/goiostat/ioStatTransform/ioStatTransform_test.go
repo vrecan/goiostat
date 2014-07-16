@@ -15,6 +15,22 @@ type error interface {
 
 var _ = Describe("IoStatTransform", func() {
 
+	Describe("Unit tests", func() {
+		It("validate partition regex doesn't get hit when using raid controllers", func() {
+			device := "md-1"
+			Expect(IsPartition(&device)).Should(BeFalse())
+		})
+		It("validate partition regeg against device", func() {
+			device := "sda"
+			Expect(IsPartition(&device)).Should(BeFalse())
+		})  
+
+		It("validate partition regeg against partition", func() {
+			device := "sda1"
+			Expect(IsPartition(&device)).Should(BeTrue())
+		}) 
+	})
+
 	Describe("IntegrationTest", func() {
 
 		var (
