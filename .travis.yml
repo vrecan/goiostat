@@ -2,19 +2,16 @@ language: go
 before_install:
 - sudo apt-get install libzmq3-dev
 install:
-- export GOPATH=`pwd`
-- export GOBIN=$GOPATH/bin
-- export PATH=$PATH:$GOBIN
-- go get github.com/pebbe/zmq3
-- go get github.com/dustin/go-humanize
-- go get github.com/onsi/gomega
-- go get github.com/onsi/ginkgo
+- go get github.com/tools/godep
 - go get code.google.com/p/go.tools/cmd/cover
-- go get code.google.com/p/goprotobuf/proto
+- go get github.com/onsi/ginkgo/ginkgo
+- go get github.com/onsi/gomega
 - go install github.com/onsi/ginkgo/ginkgo
 - go install github.com/onsi/gomega
-- go install src/github.com/CapillarySoftware/goiostat/goiostat.go
-script: bin/run_tests_travis.sh
+- export PATH=$PATH:$HOME/gopath/bin
+- $HOME/gopath/bin/godep restore
+- go install github.com/CapillarySoftware/goiostat
+script: $HOME/gopath/bin/ginkgo -cover -r --race
 deploy:
   provider: releases
   api_key:
