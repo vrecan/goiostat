@@ -6,7 +6,9 @@ install:
 - go get code.google.com/p/go.tools/cmd/cover
 - go install github.com/onsi/ginkgo/ginkgo
 - go install github.com/onsi/gomega
-script: bin/godep go install;bin/ginkgo -cover -r;
+- export PATH=$PATH:$HOME/gopath/bin
+- $HOME/gopath/bin/godep go install
+script: $HOME/gopath/bin/ginkgo -cover -r --race
 deploy:
   provider: releases
   api_key:
