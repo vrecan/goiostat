@@ -11,7 +11,7 @@ install:
 - go install github.com/onsi/ginkgo/ginkgo
 - go install github.com/onsi/gomega
 - go install github.com/CapillarySoftware/goiostat
-script: ginkgo -cover -r
+script: bin/ginkgo -cover -r
 deploy:
   provider: releases
   api_key:
