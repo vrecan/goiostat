@@ -10,7 +10,7 @@ install:
 - go get code.google.com/p/goprotobuf/proto
 - go install github.com/onsi/ginkgo/ginkgo
 - go install github.com/onsi/gomega
-- go install github.com/CapillarySoftware/goiostat/goiostat.go
+- go install github.com/CapillarySoftware/goiostat
 script: ginkgo -cover -r
 deploy:
   provider: releases
