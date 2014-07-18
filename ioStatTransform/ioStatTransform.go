@@ -50,7 +50,7 @@ func TransformStat(channel <-chan *diskStat.DiskStat, statsOutputChannel chan *d
 
 		if in {
 			//ignore partitions with no history of activity
-			if (stat.ReadsCompleted == 0 && stat.WritesCompleted == 0) ||  IsPartition(&stat.Device){
+			if (stat.ReadsCompleted == 0 && stat.WritesCompleted == 0) || IsPartition(&stat.Device) {
 				continue
 			}
 			diffStat, err := getDiffDiskStat(&prevStat, stat)

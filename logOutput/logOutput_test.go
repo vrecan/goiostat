@@ -1,13 +1,13 @@
 package logOutput_test
 
 import (
+	"fmt"
 	. "github.com/CapillarySoftware/goiostat/diskStat"
 	. "github.com/CapillarySoftware/goiostat/logOutput"
 	. "github.com/CapillarySoftware/goiostat/outputInterface"
 	. "github.com/CapillarySoftware/goiostat/protocols"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"fmt"
 )
 
 func testInterface(output Output, stats *ExtendedIoStats) {
@@ -55,10 +55,10 @@ var _ = Describe("Test LogOutput Interface", func() {
 			float64(0),
 			float64(0),
 			float64(0),
-		}		
+		}
 		output := &LogOutput{PProtoBuffers}
 		err := output.SendStats(&stats)
-		
+
 		Expect(err).ShouldNot(BeNil())
 	})
 
@@ -78,11 +78,11 @@ var _ = Describe("Test LogOutput Interface", func() {
 			float64(0),
 			float64(0),
 			float64(0),
-		}		
+		}
 		output := &LogOutput{PJson}
 		err := output.SendStats(&stats)
 		fmt.Println(err)
-		
+
 		Expect(err).Should(BeNil())
-	})	
+	})
 })

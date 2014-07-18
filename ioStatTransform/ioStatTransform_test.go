@@ -23,12 +23,12 @@ var _ = Describe("IoStatTransform", func() {
 		It("validate partition regeg against device", func() {
 			device := "sda"
 			Expect(IsPartition(&device)).Should(BeFalse())
-		})  
+		})
 
 		It("validate partition regeg against partition", func() {
 			device := "sda1"
 			Expect(IsPartition(&device)).Should(BeTrue())
-		}) 
+		})
 	})
 
 	Describe("IntegrationTest", func() {
