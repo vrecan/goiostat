@@ -8,6 +8,9 @@ Currently only support linux 2.6 kernel.
 
 <h2>install directions</h2>
 <pre>
+export GOPATH=$HOME/code/go
+export GOBIN=$HOME/bin
+export PATH=$PATH:$GOBIN
 <code>
 * go get github.com/tools/godep
 * go get code.google.com/p/go.tools/cmd/cover
