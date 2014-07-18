@@ -19,9 +19,9 @@ export PATH=$PATH:$GOBIN
  go install github.com/onsi/ginkgo/ginkgo
  go install github.com/onsi/gomega
  export PATH=$PATH:$HOME/gopath/bin
- $HOME/gopath/bin/godep restore
+ $GOBIN/godep restore
  go install github.com/CapillarySoftware/goiostat
- $HOME/gopath/bin/ginkgo -cover -r --race //unit tests
+ $GOBIN/ginkgo -r -cover -race //unit tests 
 
 make sure to install zmq3 from http://zeromq.org/intro:get-the-software
 on mac just use brew:
