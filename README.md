@@ -12,16 +12,16 @@ export GOPATH=$HOME/code/go
 export GOBIN=$HOME/bin
 export PATH=$PATH:$GOBIN
 <code>
-* go get github.com/tools/godep
-* go get code.google.com/p/go.tools/cmd/cover
-* go get github.com/onsi/ginkgo/ginkgo
-* go get github.com/onsi/gomega
-* go install github.com/onsi/ginkgo/ginkgo
-* go install github.com/onsi/gomega
-* export PATH=$PATH:$HOME/gopath/bin
-* $HOME/gopath/bin/godep restore
-* go install github.com/CapillarySoftware/goiostat
-* $HOME/gopath/bin/ginkgo -cover -r --race //unit tests
+ go get github.com/tools/godep
+ go get code.google.com/p/go.tools/cmd/cover
+ go get github.com/onsi/ginkgo/ginkgo
+ go get github.com/onsi/gomega
+ go install github.com/onsi/ginkgo/ginkgo
+ go install github.com/onsi/gomega
+ export PATH=$PATH:$HOME/gopath/bin
+ $GOBIN/godep restore
+ go install github.com/CapillarySoftware/goiostat
+ $GOBIN/ginkgo -r -cover -race //unit tests 
 
 make sure to install zmq3 from http://zeromq.org/intro:get-the-software
 on mac just use brew:
