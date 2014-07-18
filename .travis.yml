@@ -10,6 +10,7 @@ install:
 - go install github.com/onsi/gomega
 - export PATH=$PATH:$HOME/gopath/bin
 - $HOME/gopath/bin/godep restore
+- go install github.com/CapillarySoftware/goistat
 script: $HOME/gopath/bin/ginkgo -cover -r --race
 deploy:
   provider: releases
