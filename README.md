@@ -23,10 +23,7 @@ export PATH=$PATH:$GOBIN
 * go install github.com/CapillarySoftware/goiostat
 * $HOME/gopath/bin/ginkgo -cover -r --race //unit tests
 
-
-if you want zeromq output make sure to install zmq3 from http://zeromq.org/intro:get-the-software
+make sure to install zmq3 from http://zeromq.org/intro:get-the-software
 on mac just use brew:
 brew install homebrew/versions/zeromq32
-
-
 </code></pre>
