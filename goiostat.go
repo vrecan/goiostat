@@ -42,17 +42,6 @@ func main() {
 	statsTransformChannel := make(chan *diskStat.DiskStat, 10)
 	statsOutputChannel := make(chan *diskStat.ExtendedIoStats, 10)
 
-	// c := make(chan os.Signal, 1)
-	// signal.Notify(c, os.Interrupt)
-	// signal.Notify(c, syscall.SIGTERM)
-	// go func() {
-	//     <-c
-	//     log.Info("Caught signal, shutting down")
-	//     close(statsTransformChannel)
-	//     close(statsOutputChannel)
-	//     log.Info("Shutdown complete")
-	//     os.Exit(0)
-	// }()
 	var output outputInterface.Output
 	proto := PStdOut
 
