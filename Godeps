@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/CapillarySoftware/goiostat",
-	"GoVersion": "go1.2.1",
+	"GoVersion": "go1.3",
 	"Deps": [
 		{
 			"ImportPath": "code.google.com/p/goprotobuf/proto",
@@ -10,6 +10,11 @@
 		{
 			"ImportPath": "github.com/dustin/go-humanize",
 			"Rev": "3cd90eb3d932037b141d4daff9a012e1aee7e765"
+		},
+		{
+			"ImportPath": "github.com/cihub/seelog",
+			"Comment": "go1.1-24-g83d0dca",
+			"Rev": "83d0dcad636b63c066856045962befa246e00c79"
 		},
 		{
 			"ImportPath": "github.com/pebbe/zmq3",
