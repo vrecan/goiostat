@@ -6,10 +6,10 @@ import (
 	"code.google.com/p/goprotobuf/proto"
 	"encoding/json"
 	"errors"
-	"fmt"
 	. "github.com/CapillarySoftware/goiostat/diskStat"
 	. "github.com/CapillarySoftware/goiostat/protoStat"
 	. "github.com/CapillarySoftware/goiostat/protocols"
+	log "github.com/cihub/seelog"
 	zmq "github.com/pebbe/zmq3"
 )
 
@@ -22,7 +22,6 @@ type ZmqOutput struct {
 func (z *ZmqOutput) Connect(url string) {
 	z.sendSocket, z.err = zmq.NewSocket(zmq.PUSH)
 	z.sendSocket.Connect(url)
-	// fmt.Println(*z)
 }
 
 func (z *ZmqOutput) send(data *[]byte) (r int, err error) {
@@ -33,7 +32,7 @@ func (z *ZmqOutput) send(data *[]byte) (r int, err error) {
 	}
 	r, err = z.sendSocket.SendBytes(*data, 0)
 	if nil != err {
-		fmt.Println(err)
+		log.Error(err)
 	}
 	return
 }

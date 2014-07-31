@@ -8,6 +8,7 @@ import (
 	"fmt"
 	. "github.com/CapillarySoftware/goiostat/diskStat"
 	. "github.com/CapillarySoftware/goiostat/protocols"
+	// log "github.com/cihub/seelog"
 	"github.com/dustin/go-humanize"
 
 	"os"

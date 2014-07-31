@@ -2,9 +2,9 @@ package ioStatTransform
 
 import (
 	"errors"
-	"fmt"
 	"github.com/CapillarySoftware/goiostat/diskStat"
 	"github.com/CapillarySoftware/goiostat/systemCall"
+	log "github.com/cihub/seelog"
 	"regexp"
 )
 
@@ -55,7 +55,7 @@ func TransformStat(channel <-chan *diskStat.DiskStat, statsOutputChannel chan *d
 			}
 			diffStat, err := getDiffDiskStat(&prevStat, stat)
 			if nil != err {
-				fmt.Println(err, diffStat)
+				log.Error(err, "Stat that failed: ", diffStat)
 				continue
 			}
 
@@ -155,8 +155,7 @@ func getDiffDiskStat(old *diskStat.DiskStat, cur *diskStat.DiskStat) (r DiskStat
 	// RecordTime int64
 	r.RecordTime, err = getDiff(old.RecordTime, cur.RecordTime)
 	if nil != err {
-		err = nil
-		fmt.Println(old.RecordTime, cur.RecordTime)
+		log.Error("Invalid record time: ", err)
 	}
 	//    IoTotal int64
 	r.IoTotal, err = getDiff(old.IoTotal, cur.IoTotal)

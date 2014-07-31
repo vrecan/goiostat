@@ -6,7 +6,6 @@ package main
 import (
 	"bufio"
 	"flag"
-	// "fmt"
 	"github.com/CapillarySoftware/goiostat/diskStat"
 	"github.com/CapillarySoftware/goiostat/ioStatTransform"
 	"github.com/CapillarySoftware/goiostat/logOutput"
@@ -14,7 +13,7 @@ import (
 	. "github.com/CapillarySoftware/goiostat/protocols"
 	"github.com/CapillarySoftware/goiostat/statsOutput"
 	"github.com/CapillarySoftware/goiostat/zmqOutput"
-	"log"
+	log "github.com/cihub/seelog"
 	"os"
 	"strings"
 	"time"
@@ -32,6 +31,13 @@ var protocolType = flag.String("protocol", "", "Valid protocol types are (protob
 const linuxDiskStats = "/proc/diskstats"
 
 func main() {
+	defer log.Flush()
+	logger, err := log.LoggerFromConfigAsFile("seelog.xml")
+
+	if err != nil {
+		log.Warn("Failed to load config", err)
+	}
+	log.ReplaceLogger(logger)
 	flag.Parse()
 	statsTransformChannel := make(chan *diskStat.DiskStat, 10)
 	statsOutputChannel := make(chan *diskStat.ExtendedIoStats, 10)
@@ -96,7 +102,7 @@ func readAndSendStats(statsTransformChannel chan *diskStat.DiskStat) {
 
 	file, err := os.Open(linuxDiskStats)
 	if nil != err {
-		log.Fatal(err)
+		log.Error(err)
 	}
 	defer file.Close()
 
@@ -105,12 +111,12 @@ func readAndSendStats(statsTransformChannel chan *diskStat.DiskStat) {
 		line := strings.Fields(scanner.Text())
 		stat, err := diskStat.LineToStat(line)
 		if nil != err {
-			log.Fatal(err)
+			log.Error(err)
 		}
 		statsTransformChannel <- &stat
 	}
 
 	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
+		log.Error(err)
 	}
 }
