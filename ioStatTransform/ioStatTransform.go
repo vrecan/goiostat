@@ -41,8 +41,7 @@ func IsPartition(device *string) (r bool) {
 
 //TransformStat goroutine function to transform the stats and send to the stats output channel.
 func TransformStat(channel <-chan *diskStat.DiskStat, statsOutputChannel chan *diskStat.ExtendedIoStats) (err error) {
-	for {
-		stat := <-channel
+	for stat := range channel {
 		if nil == stat {
 			break
 		}
