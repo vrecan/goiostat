@@ -1,4 +1,4 @@
-<seelog type="adaptive" mininterval="100000000" maxinterval="1000000000" critmsgcount="5">
+<seelog type="asynctimer" asyncinterval="1000000">
     <outputs formatid="all">
            <filter levels="info" formatid="fmtinfo" >
               <console/>
