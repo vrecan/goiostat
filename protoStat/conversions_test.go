@@ -13,7 +13,7 @@ var _ = Describe("Conversions", func() {
 	var _ = Describe("Validate Fields", func() {
 		var (
 			eStats ExtendedIoStats
-			stats  []ProtoStat
+			stats  *ProtoStats
 			err    error
 		)
 
@@ -34,13 +34,13 @@ var _ = Describe("Conversions", func() {
 				float64(11),
 				float64(12.1),
 			}
-			stats, err = GetProtoStats(&eStats)
-			Expect(len(stats)).Should(Equal(13))
+			stats, err = GetProtoStat(&eStats)
+			Expect(len(stats.Stats)).Should(Equal(13))
 			Expect(err).Should(BeNil())
 		})
 
 		It("validate All Field Values for protoStat", func() {
-			for index, protoStat := range stats {
+			for index, protoStat := range stats.Stats {
 				//validate we didn't lose percision
 				if index == 12 {
 					Expect(*protoStat.Value).Should(Equal(float64(12.1)))
@@ -52,7 +52,7 @@ var _ = Describe("Conversions", func() {
 		})
 
 		It("Validate FieldNames in right format", func() {
-			Expect(*stats[0].Key).Should(Equal("Device_ReadsMerged"))
+			Expect(*stats.Stats[0].Key).Should(Equal("Device_ReadsMerged"))
 		})
 	})
 })

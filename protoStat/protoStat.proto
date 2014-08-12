@@ -3,4 +3,9 @@ package protoStat;
 message protoStat {
 	required string key = 1;
 	optional double value = 2;
+	optional double indexKey = 3;
+}
+
+message protoStats {
+	repeated protoStat stats = 1;
 }

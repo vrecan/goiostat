@@ -69,15 +69,15 @@ func (z *ZmqOutput) SendProtoBuffers(eStat *ExtendedIoStats) (err error) {
 		return
 	}
 	var (
-		stats []ProtoStat
+		stats *ProtoStats
 	)
 
-	stats, err = GetProtoStats(eStat)
+	stats, err = GetProtoStat(eStat)
 	if nil != err {
 		return //return the error
 	}
-	for _, stat := range stats {
-		data, mErr := proto.Marshal(&stat)
+	for _, stat := range stats.Stats {
+		data, mErr := proto.Marshal(stat)
 		if nil != mErr {
 			err = mErr
 			return
