@@ -6,12 +6,12 @@ import (
 	"bytes"
 	"errors"
 	. "github.com/CapillarySoftware/goiostat/diskStat"
-	log "github.com/cihub/seelog"
+	// log "github.com/cihub/seelog"
 	"reflect"
 )
 
 //GetProtoStats get a slice of protostats from extendedIOStats.
-func GetProtoStat(eStat *ExtendedIoStats) (stats *ProtoStats, err error) {
+func GetProtoStats(eStat *ExtendedIoStats) (stats *ProtoStats, err error) {
 	var protoStat []*ProtoStat
 	deviceName := eStat.Device
 	stats = new(ProtoStats)
@@ -44,8 +44,6 @@ func GetProtoStat(eStat *ExtendedIoStats) (stats *ProtoStats, err error) {
 			errors.New(buf.String())
 		}
 	}
-	log.Info("Info", protoStat)
-	log.Flush()
 	stats.Stats = protoStat
 	return
 }
