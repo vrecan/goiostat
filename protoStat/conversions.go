@@ -6,13 +6,16 @@ import (
 	"bytes"
 	"errors"
 	. "github.com/CapillarySoftware/goiostat/diskStat"
+	log "github.com/cihub/seelog"
 	"reflect"
 )
 
 //GetProtoStats get a slice of protostats from extendedIOStats.
-func GetProtoStats(eStat *ExtendedIoStats) (stats []ProtoStat, err error) {
-
+func GetProtoStat(eStat *ExtendedIoStats) (stats *ProtoStats, err error) {
+	var protoStat []*ProtoStat
 	deviceName := eStat.Device
+	stats = new(ProtoStats)
+
 	s := reflect.ValueOf(eStat).Elem()
 	typeOfT := s.Type()
 	for i := 0; i < s.NumField(); i++ {
@@ -28,7 +31,8 @@ func GetProtoStats(eStat *ExtendedIoStats) (stats []ProtoStat, err error) {
 			buf.WriteString(typeOfT.Field(i).Name)
 			name := buf.String()
 			value := f.Float()
-			stats = append(stats, ProtoStat{Key: &name, Value: &value})
+			msg := &ProtoStat{Key: &name, Value: &value}
+			protoStat = append(protoStat, msg)
 		case reflect.String:
 			continue //this is expected to happen on the first index which has the name
 		default:
@@ -40,5 +44,8 @@ func GetProtoStats(eStat *ExtendedIoStats) (stats []ProtoStat, err error) {
 			errors.New(buf.String())
 		}
 	}
+	log.Info("Info", protoStat)
+	log.Flush()
+	stats.Stats = protoStat
 	return
 }
