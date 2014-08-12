@@ -72,7 +72,7 @@ func (z *ZmqOutput) SendProtoBuffers(eStat *ExtendedIoStats) (err error) {
 		stats *ProtoStats
 	)
 
-	stats, err = GetProtoStat(eStat)
+	stats, err = GetProtoStats(eStat)
 	if nil != err {
 		return //return the error
 	}

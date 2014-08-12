@@ -34,7 +34,7 @@ var _ = Describe("Conversions", func() {
 				float64(11),
 				float64(12.1),
 			}
-			stats, err = GetProtoStat(&eStats)
+			stats, err = GetProtoStats(&eStats)
 			Expect(len(stats.Stats)).Should(Equal(13))
 			Expect(err).Should(BeNil())
 		})
