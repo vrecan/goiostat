@@ -90,11 +90,13 @@ func main() {
 	close(statsOutputChannel)
 }
 
+//Read stats from proc and report stats
 func readAndSendStats(statsTransformChannel chan *diskStat.DiskStat) {
 
 	file, err := os.Open(linuxDiskStats)
 	if nil != err {
 		log.Error(err)
+		return
 	}
 	defer file.Close()
 
