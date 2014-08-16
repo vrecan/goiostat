@@ -9,6 +9,7 @@ import (
 	"github.com/CapillarySoftware/goiostat/diskStat"
 	"github.com/CapillarySoftware/goiostat/ioStatTransform"
 	"github.com/CapillarySoftware/goiostat/logOutput"
+	"github.com/CapillarySoftware/goiostat/nanoMsgOutput"
 	"github.com/CapillarySoftware/goiostat/outputInterface"
 	. "github.com/CapillarySoftware/goiostat/protocols"
 	"github.com/CapillarySoftware/goiostat/statsOutput"
@@ -24,8 +25,8 @@ Go version of iostat, pull stats from proc and optionally log or send to a zeroM
 */
 
 var interval = flag.Int("interval", 5, "Interval that stats should be reported.")
-var outputType = flag.String("output", "stdout", "output should be one of the following types (stdout,zmq)")
-var zmqUrl = flag.String("zmqUrl", "tcp://localhost:5400", "ZmqUrl valid formats (tcp://localhost:[port], ipc:///location/file.ipc)")
+var outputType = flag.String("output", "stdout", "output should be one of the following types (stdout,zmq,nano)")
+var queueUrl = flag.String("queueUrl", "tcp://localhost:5400", "queueUrl valid formats (tcp://localhost:[port], ipc:///location/file.ipc)")
 var protocolType = flag.String("protocol", "", "Valid protocol types are (protobuffers, json")
 
 const linuxDiskStats = "/proc/diskstats"
@@ -42,17 +43,6 @@ func main() {
 	statsTransformChannel := make(chan *diskStat.DiskStat, 10)
 	statsOutputChannel := make(chan *diskStat.ExtendedIoStats, 10)
 
-	// c := make(chan os.Signal, 1)
-	// signal.Notify(c, os.Interrupt)
-	// signal.Notify(c, syscall.SIGTERM)
-	// go func() {
-	//     <-c
-	//     log.Info("Caught signal, shutting down")
-	//     close(statsTransformChannel)
-	//     close(statsOutputChannel)
-	//     log.Info("Shutdown complete")
-	//     os.Exit(0)
-	// }()
 	var output outputInterface.Output
 	proto := PStdOut
 
@@ -78,9 +68,13 @@ func main() {
 	switch *outputType {
 	case "zmq":
 		zmq := &zmqOutput.ZmqOutput{Proto: proto}
-		zmq.Connect(*zmqUrl)
+		zmq.Connect(*queueUrl)
 		defer zmq.Close()
 		output = zmq
+	case "nano":
+		nano := &nanoMsgOutput.NanoMsgOutput{Proto: proto}
+		nano.Connect(*queueUrl)
+		output = nano
 	default:
 		output = &logOutput.LogOutput{proto}
 	}
