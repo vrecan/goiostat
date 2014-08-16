@@ -9,6 +9,7 @@ import (
 	"github.com/CapillarySoftware/goiostat/diskStat"
 	"github.com/CapillarySoftware/goiostat/ioStatTransform"
 	"github.com/CapillarySoftware/goiostat/logOutput"
+	"github.com/CapillarySoftware/goiostat/nanoMsgOutput"
 	"github.com/CapillarySoftware/goiostat/outputInterface"
 	. "github.com/CapillarySoftware/goiostat/protocols"
 	"github.com/CapillarySoftware/goiostat/statsOutput"
@@ -24,8 +25,8 @@ Go version of iostat, pull stats from proc and optionally log or send to a zeroM
 */
 
 var interval = flag.Int("interval", 5, "Interval that stats should be reported.")
-var outputType = flag.String("output", "stdout", "output should be one of the following types (stdout,zmq)")
-var zmqUrl = flag.String("zmqUrl", "tcp://localhost:5400", "ZmqUrl valid formats (tcp://localhost:[port], ipc:///location/file.ipc)")
+var outputType = flag.String("output", "stdout", "output should be one of the following types (stdout,zmq,nano)")
+var queueUrl = flag.String("queueUrl", "tcp://localhost:5400", "queueUrl valid formats (tcp://localhost:[port], ipc:///location/file.ipc)")
 var protocolType = flag.String("protocol", "", "Valid protocol types are (protobuffers, json")
 
 const linuxDiskStats = "/proc/diskstats"
@@ -34,7 +35,7 @@ func main() {
 	defer log.Flush()
 	logger, err := log.LoggerFromConfigAsFile("seelog.xml")
 
-	if err != nil {
+	if nil != err {
 		log.Warn("Failed to load config", err)
 	}
 	log.ReplaceLogger(logger)
@@ -66,12 +67,14 @@ func main() {
 
 	switch *outputType {
 	case "zmq":
-		zmq := &zmqOutput.ZmqOutput{Proto: proto}
-		zmq.Connect(*zmqUrl)
-		defer zmq.Close()
-		output = zmq
+		output, err = zmqOutput.NewZmqOutput(queueUrl, proto)
+	case "nano":
+		output, err = nanoMsgOutput.NewNanoMsgOutput(queueUrl, proto)
 	default:
 		output = &logOutput.LogOutput{proto}
+	}
+	if nil != err {
+		log.Error("Failed to setup output ", err)
 	}
 
 	go ioStatTransform.TransformStat(statsTransformChannel, statsOutputChannel)
@@ -87,11 +90,13 @@ func main() {
 	close(statsOutputChannel)
 }
 
+//Read stats from proc and report stats
 func readAndSendStats(statsTransformChannel chan *diskStat.DiskStat) {
 
 	file, err := os.Open(linuxDiskStats)
 	if nil != err {
 		log.Error(err)
+		return
 	}
 	defer file.Close()
 

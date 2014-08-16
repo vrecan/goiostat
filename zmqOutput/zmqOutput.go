@@ -19,6 +19,12 @@ type ZmqOutput struct {
 	err        error
 }
 
+func NewZmqOutput(url *string, proto Protocol) (zmq *ZmqOutput, err error) {
+	zmq = &ZmqOutput{Proto: proto}
+	zmq.Connect(*url)
+	return
+}
+
 func (z *ZmqOutput) Connect(url string) {
 	z.sendSocket, z.err = zmq.NewSocket(zmq.PUSH)
 	z.sendSocket.Connect(url)

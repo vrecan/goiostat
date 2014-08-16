@@ -39,6 +39,7 @@ func GetProtoStats(eStat *ExtendedIoStats) (stats *ProtoStats, err error) {
 			var buf bytes.Buffer
 			kind := f.Kind().String()
 			buf.WriteString("Invalid type: ")
+
 			buf.WriteString(kind)
 			buf.WriteString(" given")
 			errors.New(buf.String())

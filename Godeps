@@ -21,6 +21,10 @@
 			"Rev": "3cd90eb3d932037b141d4daff9a012e1aee7e765"
 		},
 		{
+			"ImportPath": "github.com/op/go-nanomsg",
+			"Rev": "56d628e7c641959b9dc713a83e21dc178aee25bd"
+		},
+		{
 			"ImportPath": "github.com/pebbe/zmq3",
 			"Rev": "5828282ee2f245c309aa6f03a287f5713d4cde7b"
 		}
