@@ -35,7 +35,7 @@ func main() {
 	defer log.Flush()
 	logger, err := log.LoggerFromConfigAsFile("seelog.xml")
 
-	if err != nil {
+	if nil != err {
 		log.Warn("Failed to load config", err)
 	}
 	log.ReplaceLogger(logger)
@@ -67,16 +67,14 @@ func main() {
 
 	switch *outputType {
 	case "zmq":
-		zmq := &zmqOutput.ZmqOutput{Proto: proto}
-		zmq.Connect(*queueUrl)
-		defer zmq.Close()
-		output = zmq
+		output, err = zmqOutput.NewZmqOutput(queueUrl, proto)
 	case "nano":
-		nano := &nanoMsgOutput.NanoMsgOutput{Proto: proto}
-		nano.Connect(*queueUrl)
-		output = nano
+		output, err = nanoMsgOutput.NewNanoMsgOutput(queueUrl, proto)
 	default:
 		output = &logOutput.LogOutput{proto}
+	}
+	if nil != err {
+		log.Error("Failed to setup output ", err)
 	}
 
 	go ioStatTransform.TransformStat(statsTransformChannel, statsOutputChannel)

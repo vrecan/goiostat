@@ -1,6 +1,6 @@
 package nanoMsgOutput
 
-//zmqOutput Package that allows you to send stats over zeromq.
+//Nanomsg output Package that allows you to send stats over nanomsg.
 
 import (
 	"code.google.com/p/goprotobuf/proto"
@@ -19,12 +19,14 @@ type NanoMsgOutput struct {
 	socket *nano.PushSocket
 	err    error
 }
-func NewNanoMsgOuutput(url string)(err, error)
-	nano := new(NanoMsgOutput)
 
-	err = nano.Connect(url)
+func NewNanoMsgOutput(url *string, proto Protocol) (nano *NanoMsgOutput, err error) {
+	nano = &NanoMsgOutput{Proto: proto}
+	nano.Connect(*url)
+	return
 }
 
+//Method to connect to queue
 func (this *NanoMsgOutput) Connect(url string) (err error) {
 
 	this.socket, err = nano.NewPushSocket()
@@ -36,6 +38,7 @@ func (this *NanoMsgOutput) Connect(url string) (err error) {
 	return
 }
 
+//Send byte data over queue
 func (this *NanoMsgOutput) send(data *[]byte) (r int, err error) {
 	// fmt.Println(*z)
 	if nil == this.socket {
@@ -49,6 +52,7 @@ func (this *NanoMsgOutput) send(data *[]byte) (r int, err error) {
 	return
 }
 
+//Close the socket
 func (this *NanoMsgOutput) Close() {
 
 	if nil != this.socket {
@@ -56,6 +60,7 @@ func (this *NanoMsgOutput) Close() {
 	}
 }
 
+//Send stats by given format
 func (this *NanoMsgOutput) SendStats(eStat *ExtendedIoStats) (err error) {
 	switch this.Proto {
 	case PProtoBuffers:
@@ -76,6 +81,7 @@ func (this *NanoMsgOutput) SendStats(eStat *ExtendedIoStats) (err error) {
 	return
 }
 
+//Send stats in protobuffer format
 func (this *NanoMsgOutput) SendProtoBuffers(eStat *ExtendedIoStats) (err error) {
 	if nil == this.socket {
 		err = errors.New("Nil socket, call zmqOutput.Connect() before trying to send stats")
@@ -100,6 +106,7 @@ func (this *NanoMsgOutput) SendProtoBuffers(eStat *ExtendedIoStats) (err error) 
 	return
 }
 
+//Send stats in json format
 func (this *NanoMsgOutput) SendJson(eStat *ExtendedIoStats) (err error) {
 	if nil == this.socket {
 		err = errors.New("Nil socket, call zmqOutput.Connect() before trying to send stats")
