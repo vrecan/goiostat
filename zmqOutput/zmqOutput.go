@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	. "github.com/CapillarySoftware/goiostat/diskStat"
+	"github.com/CapillarySoftware/goiostat/proto"
 	. "github.com/CapillarySoftware/goiostat/protocols"
 	. "github.com/CapillarySoftware/gostat/protoStat"
 	log "github.com/cihub/seelog"
@@ -78,7 +79,7 @@ func (z *ZmqOutput) SendProtoBuffers(eStat *ExtendedIoStats) (err error) {
 		stats *ProtoStats
 	)
 
-	stats, err = GetProtoStats(eStat)
+	stats, err = proto.GetProtoStats(eStat)
 	if nil != err {
 		return //return the error
 	}
