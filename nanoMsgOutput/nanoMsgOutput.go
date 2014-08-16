@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"errors"
 	. "github.com/CapillarySoftware/goiostat/diskStat"
-	"github.com/CapillarySoftware/goiostat/proto"
 	. "github.com/CapillarySoftware/goiostat/protocols"
+	"github.com/CapillarySoftware/goiostat/statConversion"
 	. "github.com/CapillarySoftware/gostat/protoStat"
 	log "github.com/cihub/seelog"
 	nano "github.com/op/go-nanomsg"
@@ -92,7 +92,7 @@ func (this *NanoMsgOutput) SendProtoBuffers(eStat *ExtendedIoStats) (err error) 
 		stats *ProtoStats
 	)
 
-	stats, err = proto.GetProtoStats(eStat)
+	stats, err = statConversion.GetProtoStats(eStat)
 	if nil != err {
 		return //return the error
 	}
