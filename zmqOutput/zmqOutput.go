@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"errors"
 	. "github.com/CapillarySoftware/goiostat/diskStat"
-	. "github.com/CapillarySoftware/goiostat/protoStat"
 	. "github.com/CapillarySoftware/goiostat/protocols"
+	. "github.com/CapillarySoftware/gostat/protoStat"
 	log "github.com/cihub/seelog"
 	zmq "github.com/pebbe/zmq3"
 )
