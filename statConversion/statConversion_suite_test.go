@@ -1,4 +1,4 @@
-package protoStat_test
+package statConversion_test
 
 import (
 	. "github.com/onsi/ginkgo"
@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestProtoStat(t *testing.T) {
+func TestStatConversion(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "ProtoStat Suite")
+	RunSpecs(t, "StatConversion Suite")
 }

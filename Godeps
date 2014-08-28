@@ -4,7 +4,7 @@
 	"Deps": [
 		{
 			"ImportPath": "code.google.com/p/gogoprotobuf/proto",
-			"Rev": "559fad465cf6fb43dbed4cea5f91e06f14c819e6"
+			"Rev": "d228c1a206c3a756d7ec6cc3579d92d00c35a161"
 		},
 		{
 			"ImportPath": "code.google.com/p/goprotobuf/proto",
@@ -12,13 +12,17 @@
 			"Rev": "f5ac12b15e49095c60ae0acc6da0e28d47e2a29f"
 		},
 		{
+			"ImportPath": "github.com/CapillarySoftware/gostat/protoStat",
+			"Rev": "016c9d6d5a4dd6157c6cf27df61f8c1435636c31"
+		},
+		{
 			"ImportPath": "github.com/cihub/seelog",
-			"Comment": "go1.1-24-g83d0dca",
-			"Rev": "83d0dcad636b63c066856045962befa246e00c79"
+			"Comment": "go1.1-41-gd233b77",
+			"Rev": "d233b770e46b3ec2a99056fa5415f34c9c61cd8d"
 		},
 		{
 			"ImportPath": "github.com/dustin/go-humanize",
-			"Rev": "3cd90eb3d932037b141d4daff9a012e1aee7e765"
+			"Rev": "cb7b800be3f0238405be0e57d481740cfc4fb285"
 		},
 		{
 			"ImportPath": "github.com/op/go-nanomsg",
@@ -26,7 +30,7 @@
 		},
 		{
 			"ImportPath": "github.com/pebbe/zmq3",
-			"Rev": "5828282ee2f245c309aa6f03a287f5713d4cde7b"
+			"Rev": "2f50dab5c895a913c250b6ab17da34f53baeab8a"
 		}
 	]
 }

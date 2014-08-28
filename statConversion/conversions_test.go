@@ -1,8 +1,9 @@
-package protoStat_test
+package statConversion_test
 
 import (
 	. "github.com/CapillarySoftware/goiostat/diskStat"
-	. "github.com/CapillarySoftware/goiostat/protoStat"
+	. "github.com/CapillarySoftware/gostat/protoStat"
+        . "github.com/CapillarySoftware/goiostat/statConversion"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	// "fmt"

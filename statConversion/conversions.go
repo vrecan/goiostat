@@ -1,4 +1,4 @@
-package protoStat
+package statConversion
 
 //protoStat Package built to manage protobuffer stats messages.
 
@@ -6,8 +6,10 @@ import (
 	"bytes"
 	"errors"
 	. "github.com/CapillarySoftware/goiostat/diskStat"
+	. "github.com/CapillarySoftware/gostat/protoStat"
 	// log "github.com/cihub/seelog"
 	"reflect"
+	"time"
 )
 
 //GetProtoStats get a slice of protostats from extendedIOStats.
@@ -46,5 +48,7 @@ func GetProtoStats(eStat *ExtendedIoStats) (stats *ProtoStats, err error) {
 		}
 	}
 	stats.Stats = protoStat
+	now := time.Now().UTC().UnixNano()
+	stats.TimeNano = &now
 	return
 }
