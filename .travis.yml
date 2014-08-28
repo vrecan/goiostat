@@ -1,3 +1,5 @@
+os:
+ - linux
 language: go
 before_install:
 - sudo apt-get install libzmq3-dev
@@ -14,7 +16,7 @@ install:
 - go install github.com/onsi/gomega
 - export PATH=$PATH:$HOME/gopath/bin
 - $HOME/gopath/bin/godep restore
-- go install github.com/CapillarySoftware/goiostat
+- go install --ldflags '-extldflags "-static"' github.com/CapillarySoftware/goiostat
 script: $HOME/gopath/bin/ginkgo -cover -r --race
 deploy:
   provider: releases
