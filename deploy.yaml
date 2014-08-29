@@ -1,0 +1,16 @@
+---
+
+- name: apply go to all servers
+  hosts: all
+  user: root
+  
+  tasks: 
+  - name: clone git
+    sudo: true
+    sudo_user: capillaryDeploy
+    git: repo=git@github.com:CapillarySoftware/goiostat.git dest=/home/capillaryDeploy/go/src/github.com/CapillarySoftware accept_hostkey=yes version=master
+
+  - name: install goiostat
+    sudo: true
+    sudo_user: capillaryDeploy
+    command: ./goiostat/install.sh chdir=/home/capillaryDeploy/goiostat/
