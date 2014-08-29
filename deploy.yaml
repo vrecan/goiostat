@@ -3,7 +3,6 @@
 - name: apply go to all servers
   hosts: all
   user: root
-  
   tasks: 
   - name: install deps
     yum: name=mercurial,git state=latest
@@ -15,8 +14,9 @@
          dest=/home/capillaryDeploy/go/src/github.com/CapillarySoftware/goiostat 
          accept_hostkey=yes 
          version=master
-
+  
   - name: install goiostat
     sudo: true sudo_flags=
     sudo_user: capillaryDeploy
-    command: ./install.sh chdir=/home/capillaryDeploy/go/src/github.com/CapillarySoftware/goiostat/
+    shell: ./install.sh 
+           chdir=/home/capillaryDeploy/go/src/github.com/CapillarySoftware/goiostat
