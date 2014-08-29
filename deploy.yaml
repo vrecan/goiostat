@@ -13,4 +13,4 @@
   - name: install goiostat
     sudo: true
     sudo_user: capillaryDeploy
-    command: ./goiostat/install.sh
+    command: ./goiostat/install.sh chdir=/home/capillaryDeploy/goiostat/
