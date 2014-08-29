@@ -16,7 +16,7 @@
          version=master
   
   - name: install goiostat
-    sudo: true sudo_flags=
+    sudo: true
     sudo_user: capillaryDeploy
     shell: ./install.sh 
            chdir=/home/capillaryDeploy/go/src/github.com/CapillarySoftware/goiostat
