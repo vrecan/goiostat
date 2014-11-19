@@ -26,4 +26,6 @@ export PATH=$PATH:$GOBIN
 make sure to install zmq3 from http://zeromq.org/intro:get-the-software
 on mac just use brew:
 brew install homebrew/versions/zeromq32
+Also install nanomsg version 0.4
+brew install nanomsg 
 </code></pre>
