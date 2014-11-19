@@ -8,7 +8,7 @@ Currently only support linux 2.6 kernel.
 
 <h2>install directions</h2>
 <pre>
-export GOPATH=$HOME/code/go
+export GOPATH=$HOME/go
 export GOBIN=$HOME/bin
 export PATH=$PATH:$GOBIN
 <code>
