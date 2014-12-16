@@ -17,7 +17,7 @@ install:
 - export PATH=$PATH:$HOME/gopath/bin
 - $HOME/gopath/bin/godep restore
 - go install -tags 'nano zmq' github.com/CapillarySoftware/goiostat
-script: $HOME/gopath/bin/ginkgo -cover -r --race
+script: $HOME/gopath/bin/ginkgo -cover -r --race -tags 'nano zmq'
 deploy:
   provider: releases
   api_key:
