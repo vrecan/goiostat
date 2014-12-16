@@ -1,3 +1,5 @@
+// +build zmq
+
 package zmqOutput
 
 //zmqOutput Package that allows you to send stats over zeromq.
