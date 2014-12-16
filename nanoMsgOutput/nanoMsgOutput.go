@@ -1,3 +1,5 @@
+// +build nano
+
 package nanoMsgOutput
 
 //Nanomsg output Package that allows you to send stats over nanomsg.
@@ -86,7 +88,7 @@ func (this *NanoMsgOutput) SendStats(eStat *ExtendedIoStats) (err error) {
 func (this *NanoMsgOutput) SendProtoBuffers(eStat *ExtendedIoStats) (err error) {
 	if nil == this.socket {
 		err = errors.New("Nil socket, call zmqOutput.Connect() before trying to send stats")
-		return
+		return err
 	}
 	var (
 		stats *ProtoStats

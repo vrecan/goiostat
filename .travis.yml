@@ -16,8 +16,8 @@ install:
 - go install github.com/onsi/gomega
 - export PATH=$PATH:$HOME/gopath/bin
 - $HOME/gopath/bin/godep restore
-- go install github.com/CapillarySoftware/goiostat
-script: $HOME/gopath/bin/ginkgo -cover -r --race
+- go install -tags 'nano zmq' github.com/CapillarySoftware/goiostat
+script: $HOME/gopath/bin/ginkgo -cover -r --race -tags 'nano zmq'
 deploy:
   provider: releases
   api_key:
