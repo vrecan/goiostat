@@ -1,7 +1,7 @@
 package diskStat_test
 
 import (
-	. "github.com/CapillarySoftware/goiostat/diskStat"
+	. "github.com/vrecan/goiostat/diskStat"
 
 	"fmt"
 	. "github.com/onsi/ginkgo"

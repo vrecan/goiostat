@@ -1,10 +1,10 @@
 package ioStatTransform_test
 
 import (
-	. "github.com/CapillarySoftware/goiostat/ioStatTransform"
+	. "github.com/vrecan/goiostat/ioStatTransform"
 
 	"fmt"
-	. "github.com/CapillarySoftware/goiostat/diskStat"
+	. "github.com/vrecan/goiostat/diskStat"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )

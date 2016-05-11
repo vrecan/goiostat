@@ -6,8 +6,8 @@ package zmqOutput
 
 import (
 	"errors"
-	. "github.com/CapillarySoftware/goiostat/diskStat"
-	. "github.com/CapillarySoftware/goiostat/protocols"
+	. "github.com/vrecan/goiostat/diskStat"
+	. "github.com/vrecan/goiostat/protocols"
 )
 
 type ZmqOutput struct {

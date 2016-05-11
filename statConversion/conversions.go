@@ -5,8 +5,8 @@ package statConversion
 import (
 	"bytes"
 	"errors"
-	. "github.com/CapillarySoftware/goiostat/diskStat"
-	. "github.com/CapillarySoftware/gostat/protoStat"
+	. "github.com/vrecan/goiostat/diskStat"
+	. "github.com/vrecan/gostat/protoStat"
 	// log "github.com/cihub/seelog"
 	"reflect"
 	"time"
