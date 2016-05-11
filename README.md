@@ -1,6 +1,6 @@
 goiostat
 ========
-[![Build Status](https://travis-ci.org/CapillarySoftware/goiostat.svg?branch=master)](https://travis-ci.org/CapillarySoftware/goiostat)
+[![Build Status](https://travis-ci.org/vrecan/goiostat.svg?branch=master)](https://travis-ci.org/vrecan/goiostat)
 
 Implementation of iostat in go that allows you to send data over zeromq with protobuffers or json.
 
