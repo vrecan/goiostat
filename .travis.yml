@@ -13,6 +13,7 @@ install:
 - go get github.com/onsi/gomega
 - go install github.com/onsi/ginkgo/ginkgo
 - go install github.com/onsi/gomega
+
 - export PATH=$PATH:$HOME/gopath/bin
 - $HOME/gopath/bin/godep restore
 - go install -tags 'nano zmq' github.com/vrecan/goiostat
