@@ -2,10 +2,10 @@ package logOutput_test
 
 import (
 	"fmt"
-	. "github.com/CapillarySoftware/goiostat/diskStat"
-	. "github.com/CapillarySoftware/goiostat/logOutput"
-	. "github.com/CapillarySoftware/goiostat/outputInterface"
-	. "github.com/CapillarySoftware/goiostat/protocols"
+	. "github.com/vrecan/goiostat/diskStat"
+	. "github.com/vrecan/goiostat/logOutput"
+	. "github.com/vrecan/goiostat/outputInterface"
+	. "github.com/vrecan/goiostat/protocols"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )

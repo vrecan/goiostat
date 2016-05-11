@@ -4,8 +4,8 @@ package statsOutput
 //sends the stat to the interface given.
 
 import (
-	"github.com/CapillarySoftware/goiostat/diskStat"
-	"github.com/CapillarySoftware/goiostat/outputInterface"
+	"github.com/vrecan/goiostat/diskStat"
+	"github.com/vrecan/goiostat/outputInterface"
 	log "github.com/cihub/seelog"
 )
 

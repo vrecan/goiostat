@@ -1,11 +1,11 @@
 package zmqOutput_test
 
 import (
-	. "github.com/CapillarySoftware/goiostat/diskStat"
-	. "github.com/CapillarySoftware/goiostat/protocols"
-	. "github.com/CapillarySoftware/goiostat/zmqOutput"
+	. "github.com/vrecan/goiostat/diskStat"
+	. "github.com/vrecan/goiostat/protocols"
+	. "github.com/vrecan/goiostat/zmqOutput"
 	. "github.com/onsi/ginkgo"
-	// . "github.com/CapillarySoftware/goiostat/protoStat"
+	// . "github.com/vrecan/goiostat/protoStat"
 	// "fmt"
 	. "github.com/onsi/gomega"
 	// zmq "github.com/pebbe/zmq3"

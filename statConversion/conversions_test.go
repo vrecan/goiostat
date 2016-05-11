@@ -1,9 +1,9 @@
 package statConversion_test
 
 import (
-	. "github.com/CapillarySoftware/goiostat/diskStat"
-	. "github.com/CapillarySoftware/gostat/protoStat"
-        . "github.com/CapillarySoftware/goiostat/statConversion"
+	. "github.com/vrecan/goiostat/diskStat"
+	. "github.com/vrecan/gostat/protoStat"
+        . "github.com/vrecan/goiostat/statConversion"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	// "fmt"

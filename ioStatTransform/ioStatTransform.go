@@ -2,8 +2,8 @@ package ioStatTransform
 
 import (
 	"errors"
-	"github.com/CapillarySoftware/goiostat/diskStat"
-	"github.com/CapillarySoftware/goiostat/systemCall"
+	"github.com/vrecan/goiostat/diskStat"
+	"github.com/vrecan/goiostat/systemCall"
 	log "github.com/cihub/seelog"
 	"regexp"
 )

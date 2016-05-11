@@ -4,7 +4,7 @@ package outputInterface
 //multiple interfaces.
 
 import (
-	"github.com/CapillarySoftware/goiostat/diskStat"
+	"github.com/vrecan/goiostat/diskStat"
 	// "errors"
 )
 

@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	. "github.com/CapillarySoftware/goiostat/diskStat"
-	. "github.com/CapillarySoftware/goiostat/protocols"
+	. "github.com/vrecan/goiostat/diskStat"
+	. "github.com/vrecan/goiostat/protocols"
 	// log "github.com/cihub/seelog"
 	"github.com/dustin/go-humanize"
 
