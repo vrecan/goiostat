@@ -16,7 +16,7 @@ install:
 - go install github.com/onsi/gomega
 - export PATH=$PATH:$HOME/gopath/bin
 - $HOME/gopath/bin/godep restore
-- go install -tags 'nano zmq' github.com/CapillarySoftware/goiostat
+- go install -tags 'nano zmq' github.com/vrecan/goiostat
 script: $HOME/gopath/bin/ginkgo -cover -r --race -tags 'nano zmq'
 deploy:
   provider: releases
@@ -25,6 +25,6 @@ deploy:
   file: $HOME/gopath/bin/goiostat
   skip_cleanup: true
   on:
-    repo: CapillarySoftware/goiostat
+    repo: vrecan/goiostat
     tags: true
     all_branches: true
